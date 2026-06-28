@@ -16,7 +16,7 @@
                  style="width:38px; height:38px; border-radius:50%; object-fit:cover; border:2px solid rgba(255,255,255,0.3); flex-shrink:0;" alt="Foto profil">
             <div style="overflow:hidden;">
                 <div style="font-size:13px; font-weight:600; color:#F1F5F9; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ $user->name }}</div>
-                <div style="font-size:11px; color:rgba(255,255,255,0.5); margin-top:1px;">Mahasiswa PTI</div>
+                <div style="font-size:11px; color:rgba(255,255,255,0.5); margin-top:1px;">Guru</div>
             </div>
         </a>
     </div>
