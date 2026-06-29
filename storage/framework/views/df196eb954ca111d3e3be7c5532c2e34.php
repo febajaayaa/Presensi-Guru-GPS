@@ -22,7 +22,7 @@
                     <i class="ti ti-school" style="font-size:18px; color:#fff;"></i>
                 </div>
                 <div>
-                    <div style="font-size:12px; font-weight:700; color:#93C5FD; letter-spacing:0.06em;">PRESENSI APP</div>
+                    <div style="font-size:12px; font-weight:700; color:#93C5FD; letter-spacing:0.06em;">SMART PRESENSI</div>
                     <div style="font-size:10px; color:#475569; margin-top:2px;">Management System</div>
                 </div>
             </div>

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Admin') — Presensi App</title>
+    <title>@yield('title', 'Admin') — SMART PRESENSI</title>
 
     {{-- Tailwind CSS --}}
     <script src="https://cdn.tailwindcss.com"></script>
@@ -50,7 +50,7 @@
                 <i class="ti ti-school" style="font-size:18px; color:#fff;"></i>
             </div>
             <div>
-                <div style="font-size:12px; font-weight:700; color:#93C5FD; letter-spacing:0.05em;">PRESENSI APP</div>
+                <div style="font-size:12px; font-weight:700; color:#93C5FD; letter-spacing:0.05em;">SMART PRESENSI</div>
                 <div style="font-size:10px; color:#475569; margin-top:1px;">Management System</div>
             </div>
         </div>
