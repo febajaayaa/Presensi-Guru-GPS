@@ -125,16 +125,7 @@
             {{-- Nielsen #7: Flexibility — 2 cara tambah guru (manual & import) --}}
             <div style="display:flex; gap:10px; flex-wrap:wrap;">
 
-                {{-- Import Excel --}}
-                <form action="{{ route('guru.import') }}" method="POST" enctype="multipart/form-data" id="importForm">
-                    @csrf
-                    <input type="file" id="importFile" name="file" accept=".xlsx,.xls" hidden onchange="submitImport()">
-                    <button type="button" onclick="document.getElementById('importFile').click()"
-                        style="background:white; color:#059669; border:1.5px solid #D1FAE5; padding:9px 18px; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:6px; box-shadow:0 1px 3px rgba(0,0,0,0.06);"
-                        onmouseover="this.style.background='#F0FDF4'" onmouseout="this.style.background='white'">
-                        📥 Import Excel
-                    </button>
-                </form>
+                
 
                 {{-- Tambah Manual --}}
                 <a href="{{ route('admin.registrasi') }}"

@@ -120,14 +120,13 @@ class GuruController extends Controller
 
     // IMPORT EXCEL
     public function import(Request $request)
-    {
-        $request->validate([
-            'file' => 'required|mimes:xlsx,xls'
-        ]);
+{
+    $request->validate([
+        'file' => 'required|mimes:xlsx,csv,xls',
+    ]);
 
-        Excel::import(new GuruImport($this->mySchoolId()), $request->file('file'));
+    Excel::import(new GuruImport(auth()->user()->school_id), $request->file('file'));
 
-        return redirect()->route('guru.index')
-                         ->with('success', 'Data guru berhasil diimport.');
-    }
+    return redirect()->back()->with('success', 'Data guru berhasil diimport.');
+}
 }

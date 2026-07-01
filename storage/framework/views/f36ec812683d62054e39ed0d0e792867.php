@@ -103,7 +103,7 @@
                 ['color' => '#e08d34', 'label' => 'Terlambat'],
                 ['color' => '#2563eb', 'label' => 'Izin'],
                 ['color' => '#9333ea', 'label' => 'Sakit'],
-                ['color' => '#268a70', 'label' => 'Cuti'],
+                ['color' => '#fbcfe8', 'label' => 'Cuti'],
                 ['color' => '#6b7280', 'label' => 'Belum absen'],
                 ['color' => '#da1a1a', 'label' => 'Libur'],
             ];

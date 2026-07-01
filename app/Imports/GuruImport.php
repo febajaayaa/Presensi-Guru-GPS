@@ -6,27 +6,40 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Maatwebsite\Excel\Concerns\WithValidation;
+use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
 
-class GuruImport implements ToModel, WithHeadingRow
+class GuruImport implements ToModel, WithHeadingRow, WithValidation, SkipsEmptyRows
 {
-    private int $schoolId;
+    protected $schoolId;
 
-    // Terima school_id dari controller, bukan dari file Excel
-    public function __construct(int $schoolId)
+    public function __construct($schoolId)
     {
         $this->schoolId = $schoolId;
     }
 
     public function model(array $row)
     {
-        // Dengan WithHeadingRow, kolom diakses by nama bukan index
-        // Format Excel cukup 3 kolom: name | email | password
+        // Lewati baris yang tidak punya data lengkap
+        if (empty($row['name']) || empty($row['email']) || empty($row['password'])) {
+            return null;
+        }
+
         return new User([
             'name'      => $row['name'],
             'email'     => $row['email'],
             'password'  => Hash::make($row['password']),
             'role'      => 'guru',
-            'school_id' => $this->schoolId, // ← otomatis dari admin login
+            'school_id' => $this->schoolId,
         ]);
+    }
+
+    public function rules(): array
+    {
+        return [
+            'name'     => 'required|string',
+            'email'    => 'required|email|unique:users,email',
+            'password' => 'required|string|min:6',
+        ];
     }
 }
