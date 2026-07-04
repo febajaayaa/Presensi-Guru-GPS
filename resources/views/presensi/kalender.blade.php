@@ -2,12 +2,68 @@
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
 
+<style>
+    .app-sidebar { transition: transform 0.3s ease; }
+    .hamburger-btn { display: none; }
+
+    @media (max-width: 768px) {
+        .hamburger-btn {
+            display: flex;
+            position: fixed;
+            top: 14px; left: 14px;
+            z-index: 60;
+            width: 38px; height: 38px;
+            background: #1E3A8A;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        .app-sidebar { transform: translateX(-100%); }
+        .app-sidebar.open { transform: translateX(0); }
+        .app-main { margin-left: 0 !important; min-width: 0; }
+        .sidebar-overlay {
+            display: none;
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.4);
+            z-index: 45;
+        }
+        .sidebar-overlay.show { display: block; }
+
+        /* Top bar & judul */
+        .topbar-sticky { padding-left: 56px !important; }
+        .page-title { font-size: 18px !important; }
+        .content-area { padding: 16px !important; }
+
+        /* Legenda */
+        .legend-wrap { gap: 8px !important; margin-bottom: 12px !important; }
+
+        /* Kartu kalender */
+        .calendar-card { padding: 12px !important; }
+
+        /* Sel kalender (dirender oleh JS) */
+        .cal-cell { min-height: 46px !important; padding: 3px !important; border-radius: 6px !important; }
+        .cal-daynum { font-size: 10px !important; }
+        .cal-badge { font-size: 6px !important; padding: 1px 2px !important; letter-spacing: 0 !important; line-height:1.3 !important; }
+        .cal-time { font-size: 0 !important; padding: 0 !important; margin-top: 0 !important; }
+        .cal-time i { font-size: 8px !important; }
+    }
+</style>
+
+<button class="hamburger-btn" onclick="toggleSidebar()" aria-label="Buka menu">
+    <i class="ti ti-menu-2"></i>
+</button>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
 @php $user = auth()->user(); @endphp
 
 <div style="display:flex; min-height:100vh; background:#F0F4F8; font-family:'Inter',sans-serif;">
 
 {{-- ═══════════ SIDEBAR ═══════════ --}}
-<aside style="width:220px; min-width:220px; background:#1E3A8A; position:fixed; top:0; left:0; height:100vh; display:flex; flex-direction:column; z-index:50; box-shadow:4px 0 16px rgba(0,0,0,0.12);">
+<aside class="app-sidebar" style="width:220px; min-width:220px; background:#1E3A8A; position:fixed; top:0; left:0; height:100vh; display:flex; flex-direction:column; z-index:50; box-shadow:4px 0 16px rgba(0,0,0,0.12);">
 
     <div style="padding:20px 14px 12px; border-bottom:1px solid rgba(255,255,255,0.08);">
         <a href="{{ route('pengaturan') }}" style="display:flex; align-items:center; gap:10px; padding:10px; border-radius:10px; text-decoration:none; background:rgba(255,255,255,0.06);"
@@ -16,7 +72,7 @@
                  style="width:38px; height:38px; border-radius:50%; object-fit:cover; border:2px solid rgba(255,255,255,0.3); flex-shrink:0;" alt="Foto profil">
             <div style="overflow:hidden;">
                 <div style="font-size:13px; font-weight:600; color:#F1F5F9; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ $user->name }}</div>
-                <div style="font-size:11px; color:rgba(255,255,255,0.5); margin-top:1px;">Mahasiswa PTI</div>
+                <div style="font-size:11px; color:rgba(255,255,255,0.5); margin-top:1px;">Guru</div>
             </div>
         </a>
     </div>
@@ -62,10 +118,10 @@
 </aside>
 
 {{-- ═══════════ MAIN ═══════════ --}}
-<main style="flex:1; margin-left:220px; min-height:100vh; display:flex; flex-direction:column;">
+<main class="app-main" style="flex:1; margin-left:220px; min-height:100vh; display:flex; flex-direction:column;">
 
     {{-- Top Bar --}}
-    <div style="background:white; border-bottom:1px solid #E2E8F0; padding:10px 24px; display:flex; align-items:center; justify-content:flex-end; position:sticky; top:0; z-index:40; box-shadow:0 1px 3px rgba(0,0,0,0.04);">
+    <div class="topbar-sticky" style="background:white; border-bottom:1px solid #E2E8F0; padding:10px 24px; display:flex; align-items:center; justify-content:flex-end; position:sticky; top:0; z-index:40; box-shadow:0 1px 3px rgba(0,0,0,0.04);">
         <div style="background:#F8FAFC; border:1px solid #E2E8F0; padding:6px 14px; border-radius:8px; font-size:12px; color:#475569; display:flex; align-items:center; gap:6px;">
             <i class="ti ti-calendar" style="color:#3B82F6; font-size:14px;"></i>
             {{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}
@@ -73,19 +129,19 @@
     </div>
 
     {{-- Content --}}
-    <div style="padding:24px; flex:1;">
+    <div class="content-area" style="padding:24px; flex:1;">
 
        
         {{-- Topbar --}}
         <div class="flex justify-between items-center mb-4">
             <div>
-                 <h1 style="font-size:24px; font-weight:700; color:#0F172A; margin:0;">Riwayat Presensi</h1>
+                 <h1 class="page-title" style="font-size:24px; font-weight:700; color:#0F172A; margin:0;">Riwayat Presensi</h1>
                 <p class="text-xs text-gray-500 mt-0.5">Kalender kehadiran bulanan</p>
             </div>
         </div>
 
         {{-- Nielsen #6: Legenda selalu terlihat, tidak perlu diingat --}}
-        <div class="flex flex-wrap gap-4 mb-4">
+        <div class="legend-wrap flex flex-wrap gap-4 mb-4">
             @php
             $legends = [
                 ['color' => '#0da445', 'label' => 'Hadir'],
@@ -106,7 +162,7 @@
         </div>
 
         {{-- Kalender --}}
-        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+        <div class="calendar-card bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
 
             {{-- Nielsen #3: Navigasi bulan pakai ikon panah yang familiar --}}
             <div class="flex justify-between items-center mb-5">
@@ -134,6 +190,8 @@
 
             <div id="calendar" class="grid grid-cols-7 gap-1.5"></div>
         </div>
+
+    </div>
 
     </main>
 </div>
@@ -177,6 +235,11 @@
      JAVASCRIPT
 ================================================================== --}}
 <script>
+function toggleSidebar() {
+    document.querySelector('.app-sidebar').classList.toggle('open');
+    document.getElementById('sidebarOverlay').classList.toggle('show');
+}
+
 const presensiData = @json($presensis);
 let currentDate = new Date();
 
@@ -235,10 +298,10 @@ function renderCalendar() {
 
         if (data && (data.jam_masuk || data.jam_keluar)) {
             timeHtml = `
-                <div style="font-size:9px;margin-top:2px;padding:2px 4px;border-radius:3px;${s.badge}display:flex;align-items:center;gap:2px;">
+                <div class="cal-time" style="font-size:9px;margin-top:2px;padding:2px 4px;border-radius:3px;${s.badge}display:flex;align-items:center;gap:2px;">
                     <i class="ti ti-login" style="font-size:9px"></i>${data.jam_masuk ?? '--'}
                 </div>
-                <div style="font-size:9px;margin-top:2px;padding:2px 4px;border-radius:3px;${s.badge}display:flex;align-items:center;gap:2px;">
+                <div class="cal-time" style="font-size:9px;margin-top:2px;padding:2px 4px;border-radius:3px;${s.badge}display:flex;align-items:center;gap:2px;">
                     <i class="ti ti-logout" style="font-size:9px"></i>${data.jam_keluar ?? '--'}
                 </div>`;
         }
@@ -246,7 +309,7 @@ function renderCalendar() {
         const todayStyle = isToday ? 'outline:2px solid #2563eb;outline-offset:1px;' : '';
 
         cal.innerHTML += `
-<div onclick="showDetail('${dateStr}')"
+<div class="cal-cell" onclick="showDetail('${dateStr}')"
      role="button" tabindex="0"
      aria-label="${dateStr}: ${badge}"
      onkeydown="if(event.key==='Enter')showDetail('${dateStr}')"
@@ -254,8 +317,8 @@ function renderCalendar() {
             display:flex;flex-direction:column;transition:opacity .15s;
             ${s.cell}${todayStyle}"
      onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">
-    <div style="font-size:12px;font-weight:500;margin-bottom:auto;">${d}</div>
-    <div style="font-size:9px;font-weight:500;padding:2px 4px;border-radius:4px;text-align:center;margin-top:4px;letter-spacing:.03em;${s.badge}">
+    <div class="cal-daynum" style="font-size:12px;font-weight:500;margin-bottom:auto;">${d}</div>
+    <div class="cal-badge" style="font-size:9px;font-weight:500;padding:2px 4px;border-radius:4px;text-align:center;margin-top:4px;letter-spacing:.03em;${s.badge}">
         ${badge.toUpperCase()}
     </div>
     ${timeHtml}

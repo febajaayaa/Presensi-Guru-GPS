@@ -1,14 +1,63 @@
 <x-app-layout>
 <div class="flex min-h-screen" style="background:#F0F4F8; font-family:'Inter',sans-serif;">
- 
+
 {{-- Link Tabler Icons (konsisten dengan halaman guru) --}}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
- 
+
+<style>
+    .app-sidebar { transition: transform 0.3s ease; }
+    .hamburger-btn { display: none; }
+
+    @media (max-width: 768px) {
+        .hamburger-btn {
+            display: flex;
+            position: fixed;
+            top: 14px; left: 14px;
+            z-index: 60;
+            width: 38px; height: 38px;
+            background: #1E3A8A;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        .app-sidebar { transform: translateX(-100%); }
+        .app-sidebar.open { transform: translateX(0); }
+        .app-main { margin-left: 0 !important; min-width: 0; }
+        .sidebar-overlay {
+            display: none;
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.4);
+            z-index: 45;
+        }
+        .sidebar-overlay.show { display: block; }
+
+        .topbar-sticky { padding-left: 56px !important; flex-wrap: wrap; gap: 10px !important; row-gap: 10px !important; }
+        .content-area { padding: 16px !important; }
+
+        .filter-export-row { flex-wrap: wrap !important; width: 100%; }
+        .filter-export-row form { flex-wrap: wrap !important; }
+
+        .stat-grid-5 { grid-template-columns: repeat(2,1fr) !important; gap: 10px !important; }
+
+        .table-wrap { overflow-x: auto !important; }
+        .data-table { min-width: 720px !important; }
+    }
+</style>
+
+<button class="hamburger-btn" onclick="toggleSidebar()" aria-label="Buka menu">
+    <i class="ti ti-menu-2"></i>
+</button>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
 {{-- ═══════════════════════════════════════════
      SIDEBAR
 ═══════════════════════════════════════════ --}}
-<aside style="width:240px; background:linear-gradient(160deg,#0F172A 0%,#1E3A5F 60%,#1D4ED8 100%); color:white; position:fixed; top:0; left:0; height:100vh; display:flex; flex-direction:column; box-shadow:4px 0 24px rgba(0,0,0,0.18); z-index:50;">
- 
+<aside class="app-sidebar" style="width:240px; background:linear-gradient(160deg,#0F172A 0%,#1E3A5F 60%,#1D4ED8 100%); color:white; position:fixed; top:0; left:0; height:100vh; display:flex; flex-direction:column; box-shadow:4px 0 24px rgba(0,0,0,0.18); z-index:50;">
+
     {{-- Brand --}}
     <div style="padding:22px 20px 16px; border-bottom:1px solid rgba(255,255,255,0.08);">
         <div style="display:flex; align-items:center; gap:10px;">
@@ -21,17 +70,17 @@
             </div>
         </div>
     </div>
- 
+
     {{-- Profil --}}
     <a href="{{ route('admin.pengaturan') }}"
        style="display:flex; align-items:center; gap:10px; margin:16px 14px 6px; padding:10px 12px; border-radius:10px; background:rgba(255,255,255,0.06); text-decoration:none;"
        onmouseover="this.style.background='rgba(255,255,255,0.12)'"
        onmouseout="this.style.background='rgba(255,255,255,0.06)'">
- 
+
         <img src="{{ Auth::user()->photo ? asset('storage/'.Auth::user()->photo) : 'https://i.pravatar.cc/50' }}"
              alt="Foto {{ Auth::user()->name }}"
              style="width:38px; height:38px; border-radius:50%; object-fit:cover; border:2px solid #3B82F6; flex-shrink:0;">
- 
+
         <div style="overflow:hidden;">
             <div style="font-size:13px; font-weight:600; color:#F1F5F9; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
                 {{ Auth::user()->name }}
@@ -42,11 +91,11 @@
             </div>
         </div>
     </a>
- 
+
     {{-- Nav --}}
     <nav style="flex:1; padding:6px 14px; overflow-y:auto;">
         <div style="font-size:9px; color:#475569; letter-spacing:0.1em; text-transform:uppercase; padding:12px 8px 6px;">Menu Utama</div>
- 
+
         @php
         $navItems = [
             ['label' => 'Beranda',        'route' => 'admin.dashboard',  'icon' => 'ti-layout-dashboard'],
@@ -57,7 +106,7 @@
             ['label' => 'Pengaturan',      'route' => 'admin.pengaturan', 'icon' => 'ti-settings'],
         ];
         @endphp
- 
+
         @foreach($navItems as $item)
             @php
                 $isActive = isset($item['route'])
@@ -65,7 +114,7 @@
                     : request()->is(ltrim($item['url'], '/'));
                 $href = isset($item['route']) ? route($item['route']) : $item['url'];
             @endphp
- 
+
             <a href="{{ $href }}"
                style="display:flex; align-items:center; gap:9px; padding:9px 10px; border-radius:8px; font-size:13px; text-decoration:none; margin-bottom:2px; transition:all 0.15s;
                       border-left:2px solid {{ $isActive ? '#3B82F6' : 'transparent' }};
@@ -73,13 +122,13 @@
                       color:{{ $isActive ? '#F1F5F9' : '#94A3B8' }};"
                onmouseover="this.style.background='{{ $isActive ? 'rgba(59,130,246,0.18)' : 'rgba(255,255,255,0.07)' }}';this.style.color='#F1F5F9'"
                onmouseout="this.style.background='{{ $isActive ? 'rgba(59,130,246,0.18)' : 'transparent' }}';this.style.color='{{ $isActive ? '#F1F5F9' : '#94A3B8' }}'">
- 
+
                 <i class="ti {{ $item['icon'] }}" style="font-size:17px; flex-shrink:0; width:20px; text-align:center;"></i>
                 {{ $item['label'] }}
             </a>
         @endforeach
     </nav>
- 
+
     {{-- Logout --}}
     <div style="padding:14px;">
         <form method="POST" action="{{ route('logout') }}">
@@ -93,13 +142,13 @@
         </form>
     </div>
 </aside>
- 
+
 
 {{-- ═══════════════ MAIN ═══════════════ --}}
-<main style="flex:1; margin-left:240px; display:flex; flex-direction:column; min-height:100vh;">
+<main class="app-main" style="flex:1; margin-left:240px; display:flex; flex-direction:column; min-height:100vh;">
 
     {{-- ── TOP BAR ── --}}
-    <div style="background:white; border-bottom:1px solid #E2E8F0; padding:13px 28px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:40; box-shadow:0 1px 3px rgba(0,0,0,0.04);">
+    <div class="topbar-sticky" style="background:white; border-bottom:1px solid #E2E8F0; padding:13px 28px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:40; box-shadow:0 1px 3px rgba(0,0,0,0.04);">
         <div style="display:flex; align-items:center; gap:8px; font-size:13px; color:#64748B;">
             <a href="{{ route('admin.dashboard') }}" style="color:#94A3B8; text-decoration:none;" onmouseover="this.style.color='#1D4ED8'" onmouseout="this.style.color='#94A3B8'">Dashboard</a>
             <span>›</span>
@@ -107,7 +156,7 @@
         </div>
 
         {{-- Filter + Export --}}
-        <div style="display:flex; align-items:center; gap:10px;">
+        <div class="filter-export-row" style="display:flex; align-items:center; gap:10px;">
             @php
             $namaBulan = [
                 1=>'Januari',2=>'Februari',3=>'Maret',4=>'April',
@@ -141,14 +190,14 @@
 
             {{-- Download PDF --}}
             <a href="{{ route('admin.rekap.export', ['bulan' => $bulan, 'tahun' => $tahun]) }}"
-               style="background:#1D4ED8; color:white; padding:9px 18px; border-radius:8px; font-size:13px; font-weight:600; text-decoration:none; display:flex; align-items:center; gap:6px; box-shadow:0 2px 6px rgba(29,78,216,0.25);"
+               style="background:#1D4ED8; color:white; padding:9px 18px; border-radius:8px; font-size:13px; font-weight:600; text-decoration:none; display:flex; align-items:center; gap:6px; box-shadow:0 2px 6px rgba(29,78,216,0.25); white-space:nowrap;"
                onmouseover="this.style.background='#1E40AF'" onmouseout="this.style.background='#1D4ED8'">
                 📥 Download PDF
             </a>
         </div>
     </div>
 
-    <div style="padding:24px 28px; display:flex; flex-direction:column; gap:20px;">
+    <div class="content-area" style="padding:24px 28px; display:flex; flex-direction:column; gap:20px;">
 
         {{-- ── PAGE TITLE ── --}}
         <div>
@@ -160,7 +209,7 @@
 
         {{-- ── STAT CARDS ── --}}
         {{-- Nielsen #1: Visibility — ringkasan langsung terlihat --}}
-        <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:12px;">
+        <div class="stat-grid-5" style="display:grid; grid-template-columns:repeat(5,1fr); gap:12px;">
 
             <div style="background:white; border-radius:12px; padding:16px 18px; border:1px solid #E2E8F0; border-top:3px solid #16A34A; box-shadow:0 1px 4px rgba(0,0,0,0.04);">
                 <div style="font-size:10px; color:#64748B; font-weight:600; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:8px; display:flex; align-items:center; gap:5px;">
@@ -230,7 +279,7 @@
         <div style="background:white; border-radius:14px; border:1px solid #E2E8F0; overflow:hidden; box-shadow:0 1px 6px rgba(0,0,0,0.05);">
 
             {{-- Header tabel --}}
-            <div style="padding:16px 20px; border-bottom:1px solid #F1F5F9; display:flex; align-items:center; justify-content:space-between;">
+            <div style="padding:16px 20px; border-bottom:1px solid #F1F5F9; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
                 <div>
                     <div style="font-size:14px; font-weight:600; color:#0F172A;">Detail kehadiran guru</div>
                     <div style="font-size:12px; color:#94A3B8; margin-top:2px;">{{ $namaBulan[$bulan] }} {{ $tahun }}</div>
@@ -240,8 +289,8 @@
                 </span>
             </div>
 
-            <div style="overflow-x:auto;">
-                <table style="width:100%; border-collapse:collapse; font-size:13px;">
+            <div class="table-wrap" style="overflow-x:auto;">
+                <table class="data-table" style="width:100%; border-collapse:collapse; font-size:13px;">
                     <thead>
                         <tr style="background:#F8FAFC; border-bottom:1px solid #E2E8F0;">
                             <th style="text-align:left; padding:12px 18px; font-size:11px; font-weight:600; color:#64748B; letter-spacing:0.04em; white-space:nowrap;">NAMA GURU</th>
@@ -349,6 +398,11 @@
 {{-- Chart.js --}}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+function toggleSidebar() {
+    document.querySelector('.app-sidebar').classList.toggle('open');
+    document.getElementById('sidebarOverlay').classList.toggle('show');
+}
+
 const ctx = document.getElementById('chartRekap').getContext('2d');
 new Chart(ctx, {
     type: 'bar',

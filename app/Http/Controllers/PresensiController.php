@@ -247,12 +247,12 @@ public function kalender()
         // HALAMAN PENGATURAN
         // =========================
         public function pengaturan()
-        {
-            $user = auth()->user();
-            $school = \App\Models\School::find($user->school_id);
+{
+    $user = auth()->user();
+    $school = \App\Models\School::find($user->school_id);
 
-            return view('pengaturan', compact('user', 'school'));
-        }
+    return view('pengaturan', compact('user', 'school'));
+}
 
         public function settings()
         {
@@ -271,6 +271,10 @@ public function kalender()
         'email' => 'nullable|email',
         'password' => 'nullable|min:6',
         'current_password' => 'nullable',
+    ], [
+        'name.required' => 'Nama lengkap wajib diisi.',
+        'email.email' => 'Format email tidak valid.',
+        'password.min' => 'Password minimal 6 karakter.',
     ]);
 
     $user = auth()->user();
@@ -305,18 +309,23 @@ public function kalender()
         // UPDATE PASSWORD (khusus)
         // =========================
         public function updatePassword(Request $request)
-        {
-            $request->validate([
-                'current_password' => ['required', 'current_password'],
-                'password' => ['required', 'string', 'min:8'],
-            ]);
+{
+    $request->validate([
+        'current_password' => ['required', 'current_password'],
+        'password' => ['required', 'string', 'min:8'],
+    ], [
+        'current_password.required' => 'Password saat ini wajib diisi.',
+        'current_password.current_password' => 'Password saat ini yang Anda masukkan salah.',
+        'password.required' => 'Password baru wajib diisi.',
+        'password.min' => 'Password baru minimal harus 8 karakter.',
+    ]);
 
-            $user = $request->user();
-            $user->password = bcrypt($request->password);
-            $user->save();
+    $user = $request->user();
+    $user->password = bcrypt($request->password);
+    $user->save();
 
-            return back()->with('success', 'Password berhasil diupdate');
-        }
+    return back()->with('success', 'Password berhasil diupdate');
+}
         
 
         public function izinForm()

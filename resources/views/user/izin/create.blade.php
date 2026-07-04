@@ -2,12 +2,79 @@
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
 
+<style>
+    .app-sidebar { transition: transform 0.3s ease; }
+    .hamburger-btn { display: none; }
+
+    @media (max-width: 768px) {
+        .hamburger-btn {
+            display: flex;
+            position: fixed;
+            top: 14px; left: 14px;
+            z-index: 60;
+            width: 38px; height: 38px;
+            background: #1E3A8A;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        .app-sidebar { transform: translateX(-100%); }
+        .app-sidebar.open { transform: translateX(0); }
+        .app-main { margin-left: 0 !important; min-width: 0; }
+        .sidebar-overlay {
+            display: none;
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.4);
+            z-index: 45;
+        }
+        .sidebar-overlay.show { display: block; }
+
+        .topbar-sticky { padding-left: 56px !important; }
+        .content-area { padding: 16px !important; }
+        .page-header { flex-wrap: wrap; gap: 12px !important; }
+        .page-title { font-size: 17px !important; }
+
+        .form-layout-grid { grid-template-columns: 1fr !important; }
+
+        .icon-panel {
+            flex-direction: row !important;
+            position: static !important;
+            top: auto !important;
+            gap: 10px !important;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+
+        .icon-flyout {
+            position: fixed !important;
+            left: 12px !important;
+            right: 12px !important;
+            top: auto !important;
+            bottom: 76px !important;
+            width: auto !important;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .two-col-fields { grid-template-columns: 1fr !important; }
+    }
+</style>
+
+<button class="hamburger-btn" onclick="toggleSidebar()" aria-label="Buka menu">
+    <i class="ti ti-menu-2"></i>
+</button>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
 @php $user = auth()->user(); @endphp
 
 <div style="display:flex; min-height:100vh; background:#F0F4F8; font-family:'Inter',sans-serif;">
 
 {{-- ═══════════ SIDEBAR ═══════════ --}}
-<aside style="width:220px; min-width:220px; background:#1E3A8A; position:fixed; top:0; left:0; height:100vh; display:flex; flex-direction:column; z-index:50; box-shadow:4px 0 16px rgba(0,0,0,0.12);">
+<aside class="app-sidebar" style="width:220px; min-width:220px; background:#1E3A8A; position:fixed; top:0; left:0; height:100vh; display:flex; flex-direction:column; z-index:50; box-shadow:4px 0 16px rgba(0,0,0,0.12);">
 
     <div style="padding:20px 14px 12px; border-bottom:1px solid rgba(255,255,255,0.08);">
         <a href="{{ route('pengaturan') }}" style="display:flex; align-items:center; gap:10px; padding:10px; border-radius:10px; text-decoration:none; background:rgba(255,255,255,0.06);"
@@ -60,10 +127,10 @@
 </aside>
 
 {{-- ═══════════ MAIN ═══════════ --}}
-<main style="flex:1; margin-left:220px; min-height:100vh; display:flex; flex-direction:column;">
+<main class="app-main" style="flex:1; margin-left:220px; min-height:100vh; display:flex; flex-direction:column;">
 
     {{-- Top Bar --}}
-    <div style="background:white; border-bottom:1px solid #E2E8F0; padding:10px 24px; display:flex; align-items:center; justify-content:flex-end; position:sticky; top:0; z-index:40; box-shadow:0 1px 3px rgba(0,0,0,0.04);">
+    <div class="topbar-sticky" style="background:white; border-bottom:1px solid #E2E8F0; padding:10px 24px; display:flex; align-items:center; justify-content:flex-end; position:sticky; top:0; z-index:40; box-shadow:0 1px 3px rgba(0,0,0,0.04);">
         <div style="background:#F8FAFC; border:1px solid #E2E8F0; padding:6px 14px; border-radius:8px; font-size:12px; color:#475569; display:flex; align-items:center; gap:6px;">
             <i class="ti ti-calendar" style="color:#3B82F6; font-size:14px;"></i>
             {{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}
@@ -71,10 +138,10 @@
     </div>
 
     {{-- Content --}}
-    <div style="padding:28px 32px; flex:1;">
+    <div class="content-area" style="padding:28px 32px; flex:1;">
 
         {{-- Page Header --}}
-        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:24px;">
+        <div class="page-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:24px;">
             <div>
                 <div style="display:flex; align-items:center; gap:6px; margin-bottom:6px; font-size:12px; color:#94A3B8;">
                     <a href="{{ route('izin.form') }}" style="color:#3B82F6; text-decoration:none; display:flex; align-items:center; gap:4px;"
@@ -84,7 +151,7 @@
                     <i class="ti ti-chevron-right" style="font-size:12px;"></i>
                     <span style="color:#64748B; font-weight:500;">Ajukan Izin</span>
                 </div>
-                <h1 style="font-size:20px; font-weight:700; color:#0F172A; margin:0; display:flex; align-items:center; gap:8px;">
+                <h1 class="page-title" style="font-size:20px; font-weight:700; color:#0F172A; margin:0; display:flex; align-items:center; gap:8px;">
                     <i class="ti ti-file-plus" style="font-size:22px; color:#3B82F6;"></i> Ajukan Izin
                 </h1>
                 <p style="font-size:13px; color:#64748B; margin:4px 0 0;">Isi form berikut dengan data yang akurat dan benar.</p>
@@ -122,7 +189,7 @@
         @endif
 
         {{-- Two-column layout --}}
-        <div style="display:grid; grid-template-columns:1fr 72px; gap:20px; align-items:start;">
+        <div class="form-layout-grid" style="display:grid; grid-template-columns:1fr 72px; gap:20px; align-items:start;">
 
             {{-- ── FORM CARD ── --}}
             <div style="background:white; border-radius:16px; border:1px solid #E2E8F0; overflow:hidden; box-shadow:0 1px 4px rgba(0,0,0,0.05);">
@@ -166,7 +233,7 @@
                     </div>
 
                     {{-- Tanggal sejajar --}}
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:6px;">
+                    <div class="two-col-fields" style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:6px;">
                         <div>
                             <label style="display:block; font-size:13px; font-weight:600; color:#374151; margin-bottom:6px;">
                                 <i class="ti ti-calendar-plus" style="font-size:13px; color:#6B7280; margin-right:4px;"></i>
@@ -255,20 +322,20 @@
             </div>
 
             {{-- ── PANEL KANAN: Icon Buttons ── --}}
-            <div style="display:flex; flex-direction:column; gap:12px; position:sticky; top:72px;">
+            <div class="icon-panel" style="display:flex; flex-direction:column; gap:12px; position:sticky; top:72px;">
 
                 {{-- Panduan --}}
                 <div style="position:relative;">
                     <button onclick="togglePanel('panduan')"
                             title="Panduan Pengajuan"
-                            style="width:52px; height:52px; border-radius:14px; background:white; border:1px solid #E2E8F0; box-shadow:0 1px 4px rgba(0,0,0,0.06); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all 0.2s;"
+                            style="width:52px; height:52px; border-radius:14px; background:white; border:1px solid #E2E8F0; box-shadow:0 1px 4px rgba(0,0,0,0.06); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all 0.2s; flex-shrink:0;"
                             onmouseover="this.style.background='#EFF6FF';this.style.borderColor='#BFDBFE'"
                             onmouseout="this.style.background='white';this.style.borderColor='#E2E8F0'">
                         <i class="ti ti-list-check" style="font-size:22px; color:#2563EB;"></i>
                     </button>
 
                     {{-- Flyout --}}
-                    <div id="panel-panduan"
+                    <div id="panel-panduan" class="icon-flyout"
                          style="display:none; position:absolute; right:62px; top:0; width:280px; background:white; border-radius:14px; border:1px solid #E2E8F0; box-shadow:0 8px 24px rgba(0,0,0,0.1); z-index:100; overflow:hidden;">
                         <div style="background:linear-gradient(135deg,#2563EB,#3B82F6); padding:14px 16px; display:flex; align-items:center; gap:8px;">
                             <i class="ti ti-list-check" style="font-size:18px; color:white;"></i>
@@ -296,13 +363,13 @@
                 <div style="position:relative;">
                     <button onclick="togglePanel('jenis')"
                             title="Jenis Izin"
-                            style="width:52px; height:52px; border-radius:14px; background:white; border:1px solid #E2E8F0; box-shadow:0 1px 4px rgba(0,0,0,0.06); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all 0.2s;"
+                            style="width:52px; height:52px; border-radius:14px; background:white; border:1px solid #E2E8F0; box-shadow:0 1px 4px rgba(0,0,0,0.06); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all 0.2s; flex-shrink:0;"
                             onmouseover="this.style.background='#F5F3FF';this.style.borderColor='#DDD6FE'"
                             onmouseout="this.style.background='white';this.style.borderColor='#E2E8F0'">
                         <i class="ti ti-tag" style="font-size:22px; color:#7C3AED;"></i>
                     </button>
 
-                    <div id="panel-jenis"
+                    <div id="panel-jenis" class="icon-flyout"
                          style="display:none; position:absolute; right:62px; top:0; width:280px; background:white; border-radius:14px; border:1px solid #E2E8F0; box-shadow:0 8px 24px rgba(0,0,0,0.1); z-index:100; overflow:hidden;">
                         <div style="background:linear-gradient(135deg,#6D28D9,#7C3AED); padding:14px 16px; display:flex; align-items:center; gap:8px;">
                             <i class="ti ti-tag" style="font-size:18px; color:white;"></i>
@@ -334,13 +401,13 @@
                 <div style="position:relative;">
                     <button onclick="togglePanel('status')"
                             title="Status Pengajuan"
-                            style="width:52px; height:52px; border-radius:14px; background:white; border:1px solid #E2E8F0; box-shadow:0 1px 4px rgba(0,0,0,0.06); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all 0.2s;"
+                            style="width:52px; height:52px; border-radius:14px; background:white; border:1px solid #E2E8F0; box-shadow:0 1px 4px rgba(0,0,0,0.06); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all 0.2s; flex-shrink:0;"
                             onmouseover="this.style.background='#FFFBEB';this.style.borderColor='#FDE68A'"
                             onmouseout="this.style.background='white';this.style.borderColor='#E2E8F0'">
                         <i class="ti ti-radar" style="font-size:22px; color:#D97706;"></i>
                     </button>
 
-                    <div id="panel-status"
+                    <div id="panel-status" class="icon-flyout"
                          style="display:none; position:absolute; right:62px; top:0; width:280px; background:white; border-radius:14px; border:1px solid #E2E8F0; box-shadow:0 8px 24px rgba(0,0,0,0.1); z-index:100; overflow:hidden;">
                         <div style="background:linear-gradient(135deg,#B45309,#D97706); padding:14px 16px; display:flex; align-items:center; gap:8px;">
                             <i class="ti ti-radar" style="font-size:18px; color:white;"></i>
@@ -372,6 +439,11 @@
 </div>
 
 <script>
+function toggleSidebar() {
+    document.querySelector('.app-sidebar').classList.toggle('open');
+    document.getElementById('sidebarOverlay').classList.toggle('show');
+}
+
 // Toggle panel & tutup yang lain
 function togglePanel(id) {
     const panels = ['panduan', 'jenis', 'status'];

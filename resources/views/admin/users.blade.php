@@ -4,10 +4,55 @@
 {{-- Tabler Icons --}}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
 
+<style>
+    .app-sidebar { transition: transform 0.3s ease; }
+    .hamburger-btn { display: none; }
+
+    @media (max-width: 768px) {
+        .hamburger-btn {
+            display: flex;
+            position: fixed;
+            top: 14px; left: 14px;
+            z-index: 60;
+            width: 38px; height: 38px;
+            background: #1E3A8A;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        .app-sidebar { transform: translateX(-100%); }
+        .app-sidebar.open { transform: translateX(0); }
+        .app-main { margin-left: 0 !important; min-width: 0; }
+        .sidebar-overlay {
+            display: none;
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.4);
+            z-index: 45;
+        }
+        .sidebar-overlay.show { display: block; }
+
+        .content-area { padding: 16px !important; padding-top: 64px !important; }
+
+        .stat-grid-4 { grid-template-columns: repeat(2,1fr) !important; gap: 10px !important; }
+
+        .table-wrap { overflow-x: auto !important; }
+        .data-table { min-width: 760px !important; }
+    }
+</style>
+
+<button class="hamburger-btn" onclick="toggleSidebar()" aria-label="Buka menu">
+    <i class="ti ti-menu-2"></i>
+</button>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
 {{-- ═══════════════════════════════════════════
      SIDEBAR
 ═══════════════════════════════════════════ --}}
-<aside style="width:240px; background:linear-gradient(160deg,#0F172A 0%,#1E3A5F 60%,#1D4ED8 100%); color:white; position:fixed; top:0; left:0; height:100vh; display:flex; flex-direction:column; box-shadow:4px 0 24px rgba(0,0,0,0.18); z-index:50;">
+<aside class="app-sidebar" style="width:240px; background:linear-gradient(160deg,#0F172A 0%,#1E3A5F 60%,#1D4ED8 100%); color:white; position:fixed; top:0; left:0; height:100vh; display:flex; flex-direction:column; box-shadow:4px 0 24px rgba(0,0,0,0.18); z-index:50;">
 
     {{-- Brand --}}
     <div style="padding:22px 20px 16px; border-bottom:1px solid rgba(255,255,255,0.08);">
@@ -84,7 +129,7 @@
     </div>
 </aside>
 {{-- MAIN --}}
-<div style="flex:1; margin-left:240px; padding:24px 28px;">
+<div class="app-main content-area" style="flex:1; margin-left:240px; padding:24px 28px;">
 
     {{-- BREADCRUMB --}}
     <nav style="display:flex; align-items:center; gap:6px; font-size:12px; color:#94A3B8; margin-bottom:20px;">
@@ -116,7 +161,7 @@
     </div>
 
     {{-- STAT CARDS --}}
-    <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:20px;">
+    <div class="stat-grid-4" style="display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:20px;">
         <div style="background:white; border:1px solid #E2E8F0; border-top:3px solid #8B5CF6; border-radius:10px; padding:14px 16px;">
             <div style="font-size:11px; color:#94A3B8; text-transform:uppercase; letter-spacing:0.06em;">Total Sekolah</div>
             <div style="font-size:28px; font-weight:700; color:#8B5CF6; margin-top:4px;">{{ $schools->count() }}</div>
@@ -152,7 +197,8 @@
 
     {{-- TABEL --}}
     <div style="background:white; border:1px solid #E2E8F0; border-radius:12px; overflow:hidden;">
-        <table style="width:100%; border-collapse:collapse; font-size:13px;" id="userTable">
+        <div class="table-wrap">
+        <table class="data-table" style="width:100%; border-collapse:collapse; font-size:13px;" id="userTable">
             <thead>
                 <tr style="background:#3B82F6; color:white;">
                     <th style="padding:12px 16px; text-align:left; font-weight:600; font-size:11px; text-transform:uppercase; letter-spacing:0.05em; width:40px;">No</th>
@@ -265,6 +311,7 @@
                 @endforeach
             </tbody>
         </table>
+        </div>
 
         @if($users->count() === 0)
         <div style="padding:48px; text-align:center; color:#94A3B8; font-size:13px;">
@@ -360,6 +407,11 @@
 
 {{-- SCRIPT --}}
 <script>
+function toggleSidebar() {
+    document.querySelector('.app-sidebar').classList.toggle('open');
+    document.getElementById('sidebarOverlay').classList.toggle('show');
+}
+
 function openEditModal(userId, name, role, schoolId) {
     document.getElementById('editForm').action = '/superadmin/users/' + userId + '/edit';
     document.getElementById('modalName').textContent = name;

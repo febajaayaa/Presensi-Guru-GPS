@@ -14,12 +14,56 @@
     10. Help and Documentation            → tooltip & deskripsi singkat di setiap aksi penting
 ================================================================== --}}
 
+<style>
+    .hamburger-btn { display: none; }
+
+    @media (max-width: 768px) {
+        .hamburger-btn {
+            display: flex;
+            position: fixed;
+            top: 14px; left: 14px;
+            z-index: 60;
+            width: 38px; height: 38px;
+            background: #1e3a8a;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        .app-sidebar {
+            position: fixed;
+            top: 0; left: 0;
+            height: 100vh;
+            z-index: 50;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+        .app-sidebar.open { transform: translateX(0); }
+        .app-main { width: 100%; padding: 60px 16px 16px !important; }
+        .sidebar-overlay {
+            display: none;
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.4);
+            z-index: 45;
+        }
+        .sidebar-overlay.show { display: block; }
+    }
+</style>
+
+<button class="hamburger-btn" onclick="toggleSidebar()" aria-label="Buka menu">
+    <i class="ti ti-menu-2"></i>
+</button>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
 @php $user = auth()->user(); @endphp
 
 <div class="flex min-h-screen" style="background: #f1f5f9;">
 
     {{-- ===================== SIDEBAR ===================== --}}
-    <aside class="flex flex-col justify-between flex-shrink-0 shadow-sm"
+    <aside class="app-sidebar flex flex-col justify-between flex-shrink-0 shadow-sm"
            style="width:220px; background:#1e3a8a; padding:16px 12px;">
 
         {{-- Profil --}}
@@ -32,7 +76,7 @@
                      alt="Foto profil {{ $user->name }}">
                 <div>
                     <p class="text-sm font-medium text-white">{{ $user->name ?? 'Pengguna' }}</p>
-                    <p class="text-xs text-white/60 mt-0.5">Mahasiswa PTI</p>
+                    <p class="text-xs text-white/60 mt-0.5">Admin</p>
                 </div>
             </a>
 
@@ -68,7 +112,7 @@
         </button>
     </aside>
 
-<div class="flex-1 p-6">
+<div class="app-main flex-1 p-6">
 
     <!-- WRAPPER CARD -->
     <div class="max-w-4xl mx-auto">
@@ -88,7 +132,7 @@
         <div class="space-y-4">
         @forelse ($presensis as $item)
 
-            <div class="bg-white rounded-2xl shadow-md p-5 flex justify-between items-center hover:shadow-lg transition">
+            <div class="bg-white rounded-2xl shadow-md p-5 flex justify-between items-center hover:shadow-lg transition flex-wrap gap-3">
 
                 <!-- KIRI -->
                 <div>
@@ -167,5 +211,14 @@
     </div>
 
 </div>
+
+</div>
+
+<script>
+function toggleSidebar() {
+    document.querySelector('.app-sidebar').classList.toggle('open');
+    document.getElementById('sidebarOverlay').classList.toggle('show');
+}
+</script>
 
 </x-app-layout>

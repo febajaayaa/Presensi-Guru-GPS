@@ -1,11 +1,59 @@
 <x-app-layout>
+
+<style>
+    .app-sidebar { transition: transform 0.3s ease; }
+    .hamburger-btn { display: none; }
+
+    @media (max-width: 768px) {
+        .hamburger-btn {
+            display: flex;
+            position: fixed;
+            top: 14px;
+            left: 14px;
+            z-index: 60;
+            width: 38px; height: 38px;
+            background: #1E3A8A;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        .app-sidebar {
+            transform: translateX(-100%);
+        }
+        .app-sidebar.open {
+            transform: translateX(0);
+        }
+        .app-main {
+            margin-left: 0 !important;
+            padding: 24px 16px !important;
+        }
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.4);
+            z-index: 45;
+        }
+        .sidebar-overlay.show { display: block; }
+    }
+</style>
+
+<button class="hamburger-btn" onclick="toggleSidebar()" aria-label="Buka menu">
+    <i class="ti ti-menu-2"></i>
+</button>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
 <div class="flex min-h-screen" style="background:#F0F4F8; font-family:'Inter',sans-serif;">
 
 {{-- Tabler Icons --}}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
 
 {{-- SIDEBAR --}}
-<aside style="width:240px; flex-shrink:0; background:linear-gradient(160deg,#0F172A 0%,#1E3A5F 60%,#1D4ED8 100%); color:white; position:fixed; top:0; left:0; height:100vh; display:flex; flex-direction:column; box-shadow:4px 0 24px rgba(0,0,0,0.18); z-index:50;">
+<aside class="app-sidebar" style="width:240px; flex-shrink:0; background:linear-gradient(160deg,#0F172A 0%,#1E3A5F 60%,#1D4ED8 100%); color:white; position:fixed; top:0; left:0; height:100vh; display:flex; flex-direction:column; box-shadow:4px 0 24px rgba(0,0,0,0.18); z-index:50;">
 
     {{-- Brand --}}
     <div style="padding:22px 20px 16px; border-bottom:1px solid rgba(255,255,255,0.08);">
@@ -83,7 +131,7 @@
 </aside>
 
 {{-- CONTENT --}}
-<div style="flex:1; margin-left:240px; padding:24px 28px;">
+<div class="app-main" style="flex:1; margin-left:240px; padding:24px 28px;">
 
     {{-- BREADCRUMB --}}
     <nav style="display:flex; align-items:center; gap:6px; font-size:12px; color:#94A3B8; margin-bottom:20px;">
@@ -127,17 +175,17 @@
     <div style="background:white; border-radius:16px; box-shadow:0 1px 4px rgba(0,0,0,0.07), 0 4px 16px rgba(0,0,0,0.05); overflow:hidden; max-width:760px;">
 
         {{-- Progress Indicator --}}
-        <div style="background:#F8FAFC; border-bottom:1px solid #E2E8F0; padding:14px 24px; display:flex; align-items:center; gap:8px;">
+        <div style="background:#F8FAFC; border-bottom:1px solid #E2E8F0; padding:14px 24px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
             <div style="display:flex; align-items:center; gap:6px;">
                 <div style="width:24px; height:24px; border-radius:50%; background:#2563EB; color:white; font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center;">1</div>
                 <span style="font-size:12px; font-weight:600; color:#1E293B;">Identitas Sekolah</span>
             </div>
-            <div style="flex:1; height:1px; background:#CBD5E1;"></div>
+            <div style="flex:1; min-width:20px; height:1px; background:#CBD5E1;"></div>
             <div style="display:flex; align-items:center; gap:6px;">
                 <div style="width:24px; height:24px; border-radius:50%; background:#E2E8F0; color:#94A3B8; font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center;">2</div>
                 <span style="font-size:12px; color:#94A3B8;">Lokasi</span>
             </div>
-            <div style="flex:1; height:1px; background:#CBD5E1;"></div>
+            <div style="flex:1; min-width:20px; height:1px; background:#CBD5E1;"></div>
             <div style="display:flex; align-items:center; gap:6px;">
                 <div style="width:24px; height:24px; border-radius:50%; background:#E2E8F0; color:#94A3B8; font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center;">3</div>
                 <span style="font-size:12px; color:#94A3B8;">Kontak</span>
@@ -210,12 +258,12 @@
                         Logo Sekolah
                         <span style="font-size:11px; font-weight:400; color:#94A3B8; margin-left:4px;">JPG/PNG/SVG, maks. 1 MB</span>
                     </label>
-                    <div style="display:flex; align-items:center; gap:16px; padding:14px 16px; background:#F8FAFC; border:1.5px dashed #CBD5E1; border-radius:10px;">
+                    <div style="display:flex; align-items:center; gap:16px; padding:14px 16px; background:#F8FAFC; border:1.5px dashed #CBD5E1; border-radius:10px; flex-wrap:wrap;">
                         <div id="logoPreviewWrap" style="width:72px; height:72px; border-radius:10px; border:2px solid #E2E8F0; background:#fff; display:flex; align-items:center; justify-content:center; overflow:hidden; flex-shrink:0;">
                             <i class="ti ti-photo" id="logoIcon" style="font-size:26px; color:#CBD5E1;"></i>
                             <img id="logoPreviewImg" src="" alt="Preview Logo" style="display:none; width:100%; height:100%; object-fit:contain;">
                         </div>
-                        <div style="flex:1;">
+                        <div style="flex:1; min-width:160px;">
                             <label for="logoInput"
                                 style="display:inline-flex; align-items:center; gap:6px; background:#2563EB; color:white; padding:8px 16px; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer;"
                                 onmouseover="this.style.background='#1D4ED8'" onmouseout="this.style.background='#2563EB'">
@@ -375,6 +423,11 @@
 </style>
 
 <script>
+function toggleSidebar() {
+    document.querySelector('.app-sidebar').classList.toggle('open');
+    document.getElementById('sidebarOverlay').classList.toggle('show');
+}
+
 document.getElementById('schoolForm').addEventListener('submit', function() {
     const btn = document.getElementById('submitBtn');
     const indicator = document.getElementById('savingIndicator');

@@ -34,6 +34,21 @@ class LoginRequest extends FormRequest
     }
 
     /**
+     * Pesan error khusus untuk validasi dasar (kolom kosong / format salah),
+     * ditampilkan sebelum proses cek ke database.
+     *
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'email.required'    => 'Email wajib diisi.',
+            'email.email'       => 'Format email tidak valid.',
+            'password.required' => 'Password wajib diisi.',
+        ];
+    }
+
+    /**
      * Attempt to authenticate the request's credentials.
      *
      * @throws ValidationException
@@ -46,7 +61,7 @@ class LoginRequest extends FormRequest
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
-                'email' => trans('auth.failed'),
+                'email' => 'Email atau password yang Anda masukkan salah. Silakan periksa kembali.',
             ]);
         }
 
@@ -68,11 +83,10 @@ class LoginRequest extends FormRequest
 
         $seconds = RateLimiter::availableIn($this->throttleKey());
 
+        $menit = ceil($seconds / 60);
+
         throw ValidationException::withMessages([
-            'email' => trans('auth.throttle', [
-                'seconds' => $seconds,
-                'minutes' => ceil($seconds / 60),
-            ]),
+            'email' => "Terlalu banyak percobaan login. Silakan coba lagi dalam {$seconds} detik (sekitar {$menit} menit).",
         ]);
     }
 

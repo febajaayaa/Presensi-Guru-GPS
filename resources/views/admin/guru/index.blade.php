@@ -1,14 +1,59 @@
 <x-app-layout>
 <div class="flex min-h-screen" style="background:#F0F4F8; font-family:'Inter',sans-serif;">
- 
+
 {{-- Link Tabler Icons (konsisten dengan halaman guru) --}}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
- 
+
+<style>
+    .app-sidebar { transition: transform 0.3s ease; }
+    .hamburger-btn { display: none; }
+
+    @media (max-width: 768px) {
+        .hamburger-btn {
+            display: flex;
+            position: fixed;
+            top: 14px; left: 14px;
+            z-index: 60;
+            width: 38px; height: 38px;
+            background: #1E3A8A;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        .app-sidebar { transform: translateX(-100%); }
+        .app-sidebar.open { transform: translateX(0); }
+        .app-main { margin-left: 0 !important; min-width: 0; }
+        .sidebar-overlay {
+            display: none;
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.4);
+            z-index: 45;
+        }
+        .sidebar-overlay.show { display: block; }
+
+        .topbar-sticky { padding-left: 56px !important; flex-wrap: wrap; gap: 8px !important; }
+        .content-area { padding: 16px !important; }
+        .page-title { font-size: 17px !important; }
+
+        .table-wrap { overflow-x: auto !important; }
+        .data-table { min-width: 640px !important; }
+    }
+</style>
+
+<button class="hamburger-btn" onclick="toggleSidebar()" aria-label="Buka menu">
+    <i class="ti ti-menu-2"></i>
+</button>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
 {{-- ═══════════════════════════════════════════
      SIDEBAR
 ═══════════════════════════════════════════ --}}
-<aside style="width:240px; background:linear-gradient(160deg,#0F172A 0%,#1E3A5F 60%,#1D4ED8 100%); color:white; position:fixed; top:0; left:0; height:100vh; display:flex; flex-direction:column; box-shadow:4px 0 24px rgba(0,0,0,0.18); z-index:50;">
- 
+<aside class="app-sidebar" style="width:240px; background:linear-gradient(160deg,#0F172A 0%,#1E3A5F 60%,#1D4ED8 100%); color:white; position:fixed; top:0; left:0; height:100vh; display:flex; flex-direction:column; box-shadow:4px 0 24px rgba(0,0,0,0.18); z-index:50;">
+
     {{-- Brand --}}
     <div style="padding:22px 20px 16px; border-bottom:1px solid rgba(255,255,255,0.08);">
         <div style="display:flex; align-items:center; gap:10px;">
@@ -21,17 +66,17 @@
             </div>
         </div>
     </div>
- 
+
     {{-- Profil --}}
     <a href="{{ route('admin.pengaturan') }}"
        style="display:flex; align-items:center; gap:10px; margin:16px 14px 6px; padding:10px 12px; border-radius:10px; background:rgba(255,255,255,0.06); text-decoration:none;"
        onmouseover="this.style.background='rgba(255,255,255,0.12)'"
        onmouseout="this.style.background='rgba(255,255,255,0.06)'">
- 
+
         <img src="{{ Auth::user()->photo ? asset('storage/'.Auth::user()->photo) : 'https://i.pravatar.cc/50' }}"
              alt="Foto {{ Auth::user()->name }}"
              style="width:38px; height:38px; border-radius:50%; object-fit:cover; border:2px solid #3B82F6; flex-shrink:0;">
- 
+
         <div style="overflow:hidden;">
             <div style="font-size:13px; font-weight:600; color:#F1F5F9; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
                 {{ Auth::user()->name }}
@@ -42,11 +87,11 @@
             </div>
         </div>
     </a>
- 
+
     {{-- Nav --}}
     <nav style="flex:1; padding:6px 14px; overflow-y:auto;">
         <div style="font-size:9px; color:#475569; letter-spacing:0.1em; text-transform:uppercase; padding:12px 8px 6px;">Menu Utama</div>
- 
+
         @php
         $navItems = [
             ['label' => 'Beranda',        'route' => 'admin.dashboard',  'icon' => 'ti-layout-dashboard'],
@@ -57,7 +102,7 @@
             ['label' => 'Pengaturan',      'route' => 'admin.pengaturan', 'icon' => 'ti-settings'],
         ];
         @endphp
- 
+
         @foreach($navItems as $item)
             @php
                 $isActive = isset($item['route'])
@@ -65,7 +110,7 @@
                     : request()->is(ltrim($item['url'], '/'));
                 $href = isset($item['route']) ? route($item['route']) : $item['url'];
             @endphp
- 
+
             <a href="{{ $href }}"
                style="display:flex; align-items:center; gap:9px; padding:9px 10px; border-radius:8px; font-size:13px; text-decoration:none; margin-bottom:2px; transition:all 0.15s;
                       border-left:2px solid {{ $isActive ? '#3B82F6' : 'transparent' }};
@@ -73,13 +118,13 @@
                       color:{{ $isActive ? '#F1F5F9' : '#94A3B8' }};"
                onmouseover="this.style.background='{{ $isActive ? 'rgba(59,130,246,0.18)' : 'rgba(255,255,255,0.07)' }}';this.style.color='#F1F5F9'"
                onmouseout="this.style.background='{{ $isActive ? 'rgba(59,130,246,0.18)' : 'transparent' }}';this.style.color='{{ $isActive ? '#F1F5F9' : '#94A3B8' }}'">
- 
+
                 <i class="ti {{ $item['icon'] }}" style="font-size:17px; flex-shrink:0; width:20px; text-align:center;"></i>
                 {{ $item['label'] }}
             </a>
         @endforeach
     </nav>
- 
+
     {{-- Logout --}}
     <div style="padding:14px;">
         <form method="POST" action="{{ route('logout') }}">
@@ -93,13 +138,13 @@
         </form>
     </div>
 </aside>
- 
+
 
 {{-- ═══════════════ MAIN ═══════════════ --}}
-<main style="flex:1; margin-left:240px; display:flex; flex-direction:column; min-height:100vh;">
+<main class="app-main" style="flex:1; margin-left:240px; display:flex; flex-direction:column; min-height:100vh;">
 
     {{-- Top Bar --}}
-    <div style="background:white; border-bottom:1px solid #E2E8F0; padding:13px 28px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:40; box-shadow:0 1px 3px rgba(0,0,0,0.04);">
+    <div class="topbar-sticky" style="background:white; border-bottom:1px solid #E2E8F0; padding:13px 28px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:40; box-shadow:0 1px 3px rgba(0,0,0,0.04);">
         <div style="display:flex; align-items:center; gap:8px; font-size:13px; color:#64748B;">
             <a href="{{ route('admin.dashboard') }}" style="color:#94A3B8; text-decoration:none;" onmouseover="this.style.color='#1D4ED8'" onmouseout="this.style.color='#94A3B8'">Dashboard</a>
             <span>›</span>
@@ -110,13 +155,13 @@
         </div>
     </div>
 
-    <div style="padding:28px;">
+    <div class="content-area" style="padding:28px;">
 
         {{-- ── HEADER + ACTIONS ── --}}
         {{-- Nielsen #1: Visibility of system status — jumlah guru tampil jelas --}}
         <div style="display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:24px; flex-wrap:wrap; gap:12px;">
             <div>
-                <h1 style="font-size:20px; font-weight:700; color:#0F172A; margin:0 0 4px;">Data Guru</h1>
+                <h1 class="page-title" style="font-size:20px; font-weight:700; color:#0F172A; margin:0 0 4px;">Data Guru</h1>
                 <p class="text-xs text-gray-500 mt-0.5">
                     Total <strong style="color:#1D4ED8;">{{ $guru->count() }} guru</strong> terdaftar di sistem
                 </p>
@@ -124,8 +169,6 @@
 
             {{-- Nielsen #7: Flexibility — 2 cara tambah guru (manual & import) --}}
             <div style="display:flex; gap:10px; flex-wrap:wrap;">
-
-                
 
                 {{-- Tambah Manual --}}
                 <a href="{{ route('admin.registrasi') }}"
@@ -158,16 +201,16 @@
             <span style="font-size:16px; color:#94A3B8;">🔍</span>
             <input type="text" id="searchInput" placeholder="Cari nama atau email guru..."
                    oninput="filterTable()"
-                   style="flex:1; border:none; outline:none; font-size:13px; color:#1E293B; background:transparent;"
+                   style="flex:1; border:none; outline:none; font-size:13px; color:#1E293B; background:transparent; min-width:0;"
                    autocomplete="off">
-            <span id="searchCount" style="font-size:12px; color:#94A3B8;"></span>
+            <span id="searchCount" style="font-size:12px; color:#94A3B8; white-space:nowrap;"></span>
         </div>
 
         {{-- ── TABEL ── --}}
-        <div style="background:white; border-radius:14px; border:1px solid #E2E8F0; overflow:hidden; box-shadow:0 1px 6px rgba(0,0,0,0.05);">
+        <div class="table-wrap" style="background:white; border-radius:14px; border:1px solid #E2E8F0; overflow:hidden; box-shadow:0 1px 6px rgba(0,0,0,0.05);">
 
             {{-- Nielsen #4: Consistency — header tabel konsisten dengan warna brand --}}
-            <table style="width:100%; border-collapse:collapse;" id="guruTable">
+            <table class="data-table" style="width:100%; border-collapse:collapse;" id="guruTable">
                 <thead>
                     <tr style="background:linear-gradient(90deg,#1D4ED8,#2563EB); color:white;">
                         <th style="padding:14px 16px; text-align:left; font-size:12px; font-weight:600; letter-spacing:0.04em; width:50px;">No</th>
@@ -268,7 +311,7 @@
             {{-- Footer tabel: info jumlah data --}}
             {{-- Nielsen #1: Visibility of system status --}}
             @if($guru->count() > 0)
-            <div style="padding:12px 16px; border-top:1px solid #F1F5F9; background:#FAFBFC; display:flex; align-items:center; justify-content:between;">
+            <div style="padding:12px 16px; border-top:1px solid #F1F5F9; background:#FAFBFC; display:flex; align-items:center; justify-content:space-between;">
                 <span style="font-size:12px; color:#94A3B8;">
                     Menampilkan <strong id="visibleCount" style="color:#1D4ED8;">{{ $guru->count() }}</strong> dari {{ $guru->count() }} guru
                 </span>
@@ -281,6 +324,11 @@
 </div>
 
 <script>
+function toggleSidebar() {
+    document.querySelector('.app-sidebar').classList.toggle('open');
+    document.getElementById('sidebarOverlay').classList.toggle('show');
+}
+
 // Nielsen #5: Error prevention — konfirmasi hapus dengan nama guru
 function confirmHapus(nama) {
     return confirm('Hapus guru "' + nama + '"?\n\nTindakan ini tidak dapat dibatalkan.');

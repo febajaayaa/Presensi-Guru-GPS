@@ -2,12 +2,73 @@
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
 
+<style>
+    .app-sidebar { transition: transform 0.3s ease; }
+    .hamburger-btn { display: none; }
+
+    @media (max-width: 768px) {
+        .hamburger-btn {
+            display: flex;
+            position: fixed;
+            top: 14px; left: 14px;
+            z-index: 60;
+            width: 38px; height: 38px;
+            background: #1E3A8A;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        .app-sidebar { transform: translateX(-100%); }
+        .app-sidebar.open { transform: translateX(0); }
+        .app-main { margin-left: 0 !important; min-width: 0; }
+        .sidebar-overlay {
+            display: none;
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.4);
+            z-index: 45;
+        }
+        .sidebar-overlay.show { display: block; }
+
+        .topbar-sticky { padding-left: 56px !important; }
+        .content-area { padding: 16px !important; }
+        .page-header { flex-wrap: wrap; gap: 12px !important; }
+
+        .cuti-grid { grid-template-columns: 1fr !important; }
+        .date-grid { grid-template-columns: 1fr !important; }
+
+        /* Panel ikon kanan jadi baris horizontal di atas form, bukan melayang di kanan */
+        .side-panel {
+            position: static !important;
+            flex-direction: row !important;
+            justify-content: center !important;
+            margin-bottom: 16px !important;
+        }
+        .flyout-panel {
+            right: auto !important;
+            left: 50% !important;
+            top: 60px !important;
+            transform: translateX(-50%) !important;
+            width: 85vw !important;
+            max-width: 300px !important;
+        }
+    }
+</style>
+
+<button class="hamburger-btn" onclick="toggleSidebar()" aria-label="Buka menu">
+    <i class="ti ti-menu-2"></i>
+</button>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
 @php $user = auth()->user(); @endphp
 
 <div style="display:flex; min-height:100vh; background:#F0F4F8; font-family:'Inter',sans-serif;">
 
 {{-- ═══════════ SIDEBAR ═══════════ --}}
-<aside style="width:220px; min-width:220px; background:#1E3A8A; position:fixed; top:0; left:0; height:100vh; display:flex; flex-direction:column; z-index:50; box-shadow:4px 0 16px rgba(0,0,0,0.12);">
+<aside class="app-sidebar" style="width:220px; min-width:220px; background:#1E3A8A; position:fixed; top:0; left:0; height:100vh; display:flex; flex-direction:column; z-index:50; box-shadow:4px 0 16px rgba(0,0,0,0.12);">
 
     <div style="padding:20px 14px 12px; border-bottom:1px solid rgba(255,255,255,0.08);">
         <a href="{{ route('pengaturan') }}" style="display:flex; align-items:center; gap:10px; padding:10px; border-radius:10px; text-decoration:none; background:rgba(255,255,255,0.06);"
@@ -60,10 +121,10 @@
 </aside>
 
 {{-- ═══════════ MAIN ═══════════ --}}
-<main style="flex:1; margin-left:220px; min-height:100vh; display:flex; flex-direction:column;">
+<main class="app-main" style="flex:1; margin-left:220px; min-height:100vh; display:flex; flex-direction:column;">
 
     {{-- Top Bar --}}
-    <div style="background:white; border-bottom:1px solid #E2E8F0; padding:10px 24px; display:flex; align-items:center; justify-content:flex-end; position:sticky; top:0; z-index:40; box-shadow:0 1px 3px rgba(0,0,0,0.04);">
+    <div class="topbar-sticky" style="background:white; border-bottom:1px solid #E2E8F0; padding:10px 24px; display:flex; align-items:center; justify-content:flex-end; position:sticky; top:0; z-index:40; box-shadow:0 1px 3px rgba(0,0,0,0.04);">
         <div style="background:#F8FAFC; border:1px solid #E2E8F0; padding:6px 14px; border-radius:8px; font-size:12px; color:#475569; display:flex; align-items:center; gap:6px;">
             <i class="ti ti-calendar" style="color:#3B82F6; font-size:14px;"></i>
             {{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}
@@ -71,10 +132,10 @@
     </div>
 
     {{-- Content --}}
-    <div style="padding:28px 32px; flex:1;">
+    <div class="content-area" style="padding:28px 32px; flex:1;">
 
         {{-- Page Header --}}
-        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:24px;">
+        <div class="page-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:24px;">
             <div>
                 <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
                     <a href="{{ route('cuti.index') }}" style="color:#64748B; font-size:13px; text-decoration:none; display:flex; align-items:center; gap:4px;"
@@ -117,7 +178,7 @@
         </div>
         @endif
 
-        <div style="display:grid; grid-template-columns:1fr 300px; gap:20px; align-items:start;">
+        <div class="cuti-grid" style="display:grid; grid-template-columns:1fr 300px; gap:20px; align-items:start;">
 
             {{-- ── FORM CARD ── --}}
             <div style="background:white; border-radius:16px; border:1px solid #E2E8F0; overflow:hidden; box-shadow:0 1px 4px rgba(0,0,0,0.05);">
@@ -161,7 +222,7 @@
                     </div>
 
                     {{-- Tanggal Mulai & Selesai (sejajar) --}}
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px;">
+                    <div class="date-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px;">
                         <div>
                             <label style="display:block; font-size:13px; font-weight:600; color:#374151; margin-bottom:6px;">
                                 <i class="ti ti-calendar-plus" style="font-size:13px; color:#6B7280; margin-right:4px;"></i>
@@ -199,7 +260,7 @@
                     </div>
 
                     {{-- Info Durasi (muncul otomatis) --}}
-                    <div id="info-durasi" style="display:none; background:#EFF6FF; border:1px solid #BFDBFE; border-radius:8px; padding:10px 14px; margin-bottom:20px; display:none; align-items:center; gap:8px;">
+                    <div id="info-durasi" style="display:none; background:#EFF6FF; border:1px solid #BFDBFE; border-radius:8px; padding:10px 14px; margin-bottom:20px; align-items:center; gap:8px;">
                         <i class="ti ti-clock" style="color:#2563EB; font-size:16px; flex-shrink:0;"></i>
                         <span id="teks-durasi" style="font-size:13px; color:#1D4ED8; font-weight:500;"></span>
                     </div>
@@ -253,10 +314,9 @@
             </div>
 
             {{-- ── PANEL KANAN: Icon Buttons ── --}}
-<div style="display:flex; flex-direction:column; gap:12px; position:sticky; top:72px;">
+            <div class="side-panel" style="display:flex; flex-direction:column; gap:12px; position:sticky; top:72px;">
 
-
-    {{-- Panduan --}}
+                {{-- Panduan --}}
                 <div style="position:relative;">
                     <button onclick="togglePanel('panduan')"
                             title="Panduan Pengajuan"
@@ -267,7 +327,7 @@
                     </button>
 
                     {{-- Flyout --}}
-                    <div id="panel-panduan"
+                    <div id="panel-panduan" class="flyout-panel"
                          style="display:none; position:absolute; right:62px; top:0; width:280px; background:white; border-radius:14px; border:1px solid #E2E8F0; box-shadow:0 8px 24px rgba(0,0,0,0.1); z-index:100; overflow:hidden;">
                         <div style="background:linear-gradient(135deg,#2563EB,#3B82F6); padding:14px 16px; display:flex; align-items:center; gap:8px;">
                             <i class="ti ti-list-check" style="font-size:18px; color:white;"></i>
@@ -301,7 +361,7 @@
                         <i class="ti ti-tag" style="font-size:22px; color:#7C3AED;"></i>
                     </button>
 
-                    <div id="panel-jenis"
+                    <div id="panel-jenis" class="flyout-panel"
                          style="display:none; position:absolute; right:62px; top:0; width:280px; background:white; border-radius:14px; border:1px solid #E2E8F0; box-shadow:0 8px 24px rgba(0,0,0,0.1); z-index:100; overflow:hidden;">
                         <div style="background:linear-gradient(135deg,#6D28D9,#7C3AED); padding:14px 16px; display:flex; align-items:center; gap:8px;">
                             <i class="ti ti-tag" style="font-size:18px; color:white;"></i>
@@ -309,15 +369,15 @@
                         </div>
                         <div style="padding:12px 14px; display:flex; flex-direction:column; gap:7px;">
                             @foreach([
-                            ['label'=>'Cuti Umum',      'desc'=>'Keperluan pribadi & keluarga'],
-                            ['label'=>'Cuti Khusus',    'desc'=>'Kegiatan resmi/tugas dinas'],
-                            ['label'=>'Cuti Tambahan',  'desc'=>'Perpanjangan cuti yang ada'],
-                            ['label'=>'Cuti Melahirkan','desc'=>'Hak cuti bagi ibu melahirkan'],
-                            ['label'=>'Cuti Sakit',     'desc'=>'Pemulihan kondisi kesehatan'],
+                            ['label'=>'Cuti Umum',      'desc'=>'Keperluan pribadi & keluarga',    'icon'=>'ti-calendar',        'color'=>'#2563EB','bg'=>'#EFF6FF'],
+                            ['label'=>'Cuti Khusus',    'desc'=>'Kegiatan resmi/tugas dinas',       'icon'=>'ti-briefcase',       'color'=>'#7C3AED','bg'=>'#F5F3FF'],
+                            ['label'=>'Cuti Tambahan',  'desc'=>'Perpanjangan cuti yang ada',       'icon'=>'ti-calendar-plus',   'color'=>'#0D9488','bg'=>'#F0FDFA'],
+                            ['label'=>'Cuti Melahirkan','desc'=>'Hak cuti bagi ibu melahirkan',     'icon'=>'ti-heart',           'color'=>'#DB2777','bg'=>'#FDF2F8'],
+                            ['label'=>'Cuti Sakit',     'desc'=>'Pemulihan kondisi kesehatan',      'icon'=>'ti-first-aid-kit',   'color'=>'#DC2626','bg'=>'#FEF2F2'],
                         ] as $jenis)
                             <div style="display:flex; align-items:center; gap:10px; padding:8px 10px; background:#F8FAFC; border-radius:8px;">
-                                <div style="width:30px; height:30px; }}; border-radius:7px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-                                    
+                                <div style="width:30px; height:30px; background:{{ $jenis['bg'] }}; border-radius:7px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                                    <i class="ti {{ $jenis['icon'] }}" style="font-size:14px; color:{{ $jenis['color'] }};"></i>
                                 </div>
                                 <div>
                                     <div style="font-size:12px; font-weight:600; color:#374151;">{{ $jenis['label'] }}</div>
@@ -329,7 +389,7 @@
                     </div>
                 </div>
 
-    {{-- Status Pengajuan --}}
+                {{-- Status Pengajuan --}}
                 <div style="position:relative;">
                     <button onclick="togglePanel('status')"
                             title="Status Pengajuan"
@@ -339,7 +399,7 @@
                         <i class="ti ti-radar" style="font-size:22px; color:#D97706;"></i>
                     </button>
 
-                    <div id="panel-status"
+                    <div id="panel-status" class="flyout-panel"
                          style="display:none; position:absolute; right:62px; top:0; width:280px; background:white; border-radius:14px; border:1px solid #E2E8F0; box-shadow:0 8px 24px rgba(0,0,0,0.1); z-index:100; overflow:hidden;">
                         <div style="background:linear-gradient(135deg,#B45309,#D97706); padding:14px 16px; display:flex; align-items:center; gap:8px;">
                             <i class="ti ti-radar" style="font-size:18px; color:white;"></i>
@@ -364,10 +424,18 @@
                 </div>
 
             </div>
-    
 
+        </div>
+    </div>
+</main>
+</div>
 
 <script>
+function toggleSidebar() {
+    document.querySelector('.app-sidebar').classList.toggle('open');
+    document.getElementById('sidebarOverlay').classList.toggle('show');
+}
+
 function togglePanel(id) {
     const panels = ['panduan','jenis','status'];
 
@@ -401,7 +469,6 @@ document.addEventListener('click', function(e){
     }
 
 });
-
 </script>
-</div>
+
 </x-app-layout>

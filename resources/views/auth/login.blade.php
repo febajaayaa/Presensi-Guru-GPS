@@ -1,7 +1,3 @@
-<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-200 via-blue-100 to-white">
-
-    <div class="w-full max-w-md">
-
 <x-guest-layout>
 
     <div class="w-full max-w-sm bg-white/80 backdrop-blur-lg p-6 rounded-3xl shadow-2xl">
@@ -23,6 +19,18 @@
         <!-- STATUS -->
         <x-auth-session-status class="mb-4" :status="session('status')" />
 
+        <!-- PESAN ERROR UMUM (email/password salah) -->
+        @if ($errors->has('email'))
+            <div class="mb-4 flex items-start gap-2 rounded-xl border border-red-300 bg-red-50 px-4 py-3">
+                <svg class="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m0 3.75h.007v.008H12v-.008zM21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <p class="text-sm text-red-600 font-medium">
+                    {{ $errors->first('email') }}
+                </p>
+            </div>
+        @endif
+
         <!-- FORM -->
         <form method="POST" action="{{ route('login') }}">
             @csrf
@@ -31,16 +39,25 @@
             <div class="mb-3">
                 <label class="text-sm font-semibold text-gray-600">Email</label>
                 <input type="email" name="email"
-                    class="w-full mt-1 px-4 py-2 rounded-xl border focus:ring-2 focus:ring-blue-400 focus:outline-none"
-                    required>
+                    value="{{ old('email') }}"
+                    class="w-full mt-1 px-4 py-2 rounded-xl border focus:ring-2 focus:outline-none
+                        {{ $errors->has('email') ? 'border-red-400 focus:ring-red-300' : 'border-gray-300 focus:ring-blue-400' }}"
+                    required autofocus>
+                @error('email')
+                    <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                @enderror
             </div>
 
             <!-- Password -->
             <div class="mb-3">
                 <label class="text-sm font-semibold text-gray-600">Password</label>
                 <input type="password" name="password"
-                    class="w-full mt-1 px-4 py-2 rounded-xl border focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                    class="w-full mt-1 px-4 py-2 rounded-xl border focus:ring-2 focus:outline-none
+                        {{ $errors->has('email') ? 'border-red-400 focus:ring-red-300' : 'border-gray-300 focus:ring-blue-400' }}"
                     required>
+                @error('password')
+                    <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                @enderror
             </div>
 
             <!-- Remember -->

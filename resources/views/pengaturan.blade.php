@@ -2,12 +2,57 @@
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
 
+<style>
+    .app-sidebar { transition: transform 0.3s ease; }
+    .hamburger-btn { display: none; }
+
+    @media (max-width: 768px) {
+        .hamburger-btn {
+            display: flex;
+            position: fixed;
+            top: 14px; left: 14px;
+            z-index: 60;
+            width: 38px; height: 38px;
+            background: #1E3A8A;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        .app-sidebar { transform: translateX(-100%); }
+        .app-sidebar.open { transform: translateX(0); }
+        .app-main { margin-left: 0 !important; min-width: 0; }
+        .sidebar-overlay {
+            display: none;
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.4);
+            z-index: 45;
+        }
+        .sidebar-overlay.show { display: block; }
+
+        .topbar-sticky { padding-left: 56px !important; }
+        .content-area { padding: 16px !important; }
+
+        .two-col-fields { grid-template-columns: 1fr !important; }
+        .info-grid-3 { grid-template-columns: 1fr !important; }
+        .password-grid-3 { grid-template-columns: 1fr !important; align-items: stretch !important; }
+    }
+</style>
+
+<button class="hamburger-btn" onclick="toggleSidebar()" aria-label="Buka menu">
+    <i class="ti ti-menu-2"></i>
+</button>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
 @php $user = auth()->user(); @endphp
 
 <div style="display:flex; min-height:100vh; background:#F0F4F8; font-family:'Inter',sans-serif;">
 
 {{-- ═══════════ SIDEBAR ═══════════ --}}
-<aside style="width:220px; min-width:220px; background:#1E3A8A; position:fixed; top:0; left:0; height:100vh; display:flex; flex-direction:column; z-index:50; box-shadow:4px 0 16px rgba(0,0,0,0.12);">
+<aside class="app-sidebar" style="width:220px; min-width:220px; background:#1E3A8A; position:fixed; top:0; left:0; height:100vh; display:flex; flex-direction:column; z-index:50; box-shadow:4px 0 16px rgba(0,0,0,0.12);">
 
     {{-- Profil --}}
     <div style="padding:20px 14px 12px; border-bottom:1px solid rgba(255,255,255,0.08);">
@@ -17,7 +62,7 @@
                  style="width:38px; height:38px; border-radius:50%; object-fit:cover; border:2px solid rgba(255,255,255,0.3); flex-shrink:0;" alt="Foto profil">
             <div style="overflow:hidden;">
                 <div style="font-size:13px; font-weight:600; color:#F1F5F9; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ $user->name }}</div>
-                <div style="font-size:11px; color:rgba(255,255,255,0.5); margin-top:1px;">Mahasiswa PTI</div>
+                <div style="font-size:11px; color:rgba(255,255,255,0.5); margin-top:1px;">Guru</div>
             </div>
         </a>
     </div>
@@ -65,10 +110,10 @@
 </aside>
 
 {{-- ═══════════ MAIN ═══════════ --}}
-<main style="flex:1; margin-left:220px; min-height:100vh; display:flex; flex-direction:column;">
+<main class="app-main" style="flex:1; margin-left:220px; min-height:100vh; display:flex; flex-direction:column;">
 
     {{-- Top Bar --}}
-    <div style="background:white; border-bottom:1px solid #E2E8F0; padding:10px 24px; display:flex; align-items:center; justify-content:flex-end; position:sticky; top:0; z-index:40; box-shadow:0 1px 3px rgba(0,0,0,0.04);">
+    <div class="topbar-sticky" style="background:white; border-bottom:1px solid #E2E8F0; padding:10px 24px; display:flex; align-items:center; justify-content:flex-end; position:sticky; top:0; z-index:40; box-shadow:0 1px 3px rgba(0,0,0,0.04);">
         <div style="background:#F8FAFC; border:1px solid #E2E8F0; padding:6px 14px; border-radius:8px; font-size:12px; color:#475569; display:flex; align-items:center; gap:6px;">
             <i class="ti ti-calendar" style="color:#3B82F6; font-size:14px;"></i>
             {{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}
@@ -76,7 +121,7 @@
     </div>
 
     {{-- Content --}}
-    <div style="padding:24px; flex:1;">
+    <div class="content-area" style="padding:24px; flex:1;">
 
         {{-- Page Header --}}
         <div style="margin-bottom:20px;">
@@ -122,7 +167,7 @@
                 @csrf
 
                 {{-- Avatar row --}}
-                <div style="display:flex; align-items:center; gap:16px; margin-bottom:18px; padding:14px 16px; background:#F8FAFC; border-radius:10px; border:1px solid #F1F5F9;">
+                <div style="display:flex; align-items:center; gap:16px; margin-bottom:18px; padding:14px 16px; background:#F8FAFC; border-radius:10px; border:1px solid #F1F5F9; flex-wrap:wrap;">
                     <div style="position:relative; flex-shrink:0;">
                         <img src="{{ Auth::user()->photo ? asset('storage/'.Auth::user()->photo) : 'https://i.pravatar.cc/80' }}"
                              id="avatarPreview"
@@ -139,7 +184,7 @@
                     </div>
                 </div>
 
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:16px;">
+                <div class="two-col-fields" style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:16px;">
 
                     {{-- Nama --}}
                     <div>
@@ -190,7 +235,7 @@
                 </div>
             </div>
 
-            <div style="padding:16px 20px; display:grid; grid-template-columns:repeat(3,1fr); gap:12px;">
+            <div class="info-grid-3" style="padding:16px 20px; display:grid; grid-template-columns:repeat(3,1fr); gap:12px;">
                 <div style="background:#F8FAFC; border-radius:10px; padding:12px 14px; border:1px solid #F1F5F9;">
                     <div style="font-size:10px; color:#94A3B8; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:5px;">Nama Sekolah</div>
                     <div style="font-size:14px; font-weight:600; color:#0F172A;">{{ $school->nama_sekolah ?? '-' }}</div>
@@ -224,66 +269,69 @@
                 </div>
             </div>
 
-            <form method="POST" action="{{ route('pengaturan.update') }}" style="padding:20px;">
-                @csrf
+            <form method="POST" action="{{ route('pengaturan.password') }}" style="padding:20px;">
+    @csrf
 
-                <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; align-items:end; margin-bottom:14px;">
+    {{-- Baris input: password lama & baru sejajar tingginya --}}
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:6px;">
 
-                    {{-- Password lama --}}
-                    <div>
-                        <label style="display:block; font-size:11px; font-weight:600; color:#374151; margin-bottom:5px; letter-spacing:0.04em; text-transform:uppercase;">Password Saat Ini</label>
-                        <div style="position:relative;">
-                            <i class="ti ti-lock" style="position:absolute; left:11px; top:50%; transform:translateY(-50%); font-size:15px; color:#94A3B8;"></i>
-                            <input type="password" name="current_password" id="cur_pass" placeholder="••••••••"
-                                   style="width:100%; border:1.5px solid #E2E8F0; border-radius:8px; padding:9px 34px 9px 34px; font-size:13px; color:#1E293B; outline:none; box-sizing:border-box;"
-                                   onfocus="this.style.borderColor='#3B82F6';this.style.boxShadow='0 0 0 3px rgba(59,130,246,0.1)'"
-                                   onblur="this.style.borderColor='#E2E8F0';this.style.boxShadow='none'">
-                            <button type="button" onclick="togglePass('cur_pass','eye_cur')" style="position:absolute; right:10px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; color:#94A3B8;">
-                                <i class="ti ti-eye" id="eye_cur" style="font-size:15px;"></i>
-                            </button>
-                        </div>
-                    </div>
+        {{-- Password lama --}}
+        <div>
+            <label style="display:block; font-size:11px; font-weight:600; color:#374151; margin-bottom:5px; letter-spacing:0.04em; text-transform:uppercase;">Password Saat Ini</label>
+            <div style="position:relative;">
+                <i class="ti ti-lock" style="position:absolute; left:11px; top:50%; transform:translateY(-50%); font-size:15px; color:#94A3B8;"></i>
+                <input type="password" name="current_password" id="cur_pass" placeholder="••••••••"
+                       style="width:100%; border:1.5px solid #E2E8F0; border-radius:8px; padding:9px 34px 9px 34px; font-size:13px; color:#1E293B; outline:none; box-sizing:border-box;"
+                       onfocus="this.style.borderColor='#3B82F6';this.style.boxShadow='0 0 0 3px rgba(59,130,246,0.1)'"
+                       onblur="this.style.borderColor='#E2E8F0';this.style.boxShadow='none'">
+                <button type="button" onclick="togglePass('cur_pass','eye_cur')" style="position:absolute; right:10px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; color:#94A3B8;">
+                    <i class="ti ti-eye" id="eye_cur" style="font-size:15px;"></i>
+                </button>
+            </div>
+        </div>
 
-                    {{-- Password baru --}}
-                    <div>
-                        <label style="display:block; font-size:11px; font-weight:600; color:#374151; margin-bottom:5px; letter-spacing:0.04em; text-transform:uppercase;">Password Baru</label>
-                        <div style="position:relative;">
-                            <i class="ti ti-key" style="position:absolute; left:11px; top:50%; transform:translateY(-50%); font-size:15px; color:#94A3B8;"></i>
-                            <input type="password" name="password" id="new_pass" placeholder="Min. 8 karakter"
-                                   style="width:100%; border:1.5px solid #E2E8F0; border-radius:8px; padding:9px 34px 9px 34px; font-size:13px; color:#1E293B; outline:none; box-sizing:border-box;"
-                                   onfocus="this.style.borderColor='#3B82F6';this.style.boxShadow='0 0 0 3px rgba(59,130,246,0.1)'"
-                                   onblur="this.style.borderColor='#E2E8F0';this.style.boxShadow='none'"
-                                   oninput="checkStrength(this.value)">
-                            <button type="button" onclick="togglePass('new_pass','eye_new')" style="position:absolute; right:10px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; color:#94A3B8;">
-                                <i class="ti ti-eye" id="eye_new" style="font-size:15px;"></i>
-                            </button>
-                        </div>
-                        <div style="margin-top:5px;">
-                            <div style="height:3px; background:#F1F5F9; border-radius:4px; overflow:hidden;">
-                                <div id="sBar" style="height:100%; width:0; border-radius:4px; transition:all 0.3s;"></div>
-                            </div>
-                            <div id="sText" style="font-size:10px; color:#94A3B8; margin-top:2px;"></div>
-                        </div>
-                    </div>
+        {{-- Password baru --}}
+        <div>
+            <label style="display:block; font-size:11px; font-weight:600; color:#374151; margin-bottom:5px; letter-spacing:0.04em; text-transform:uppercase;">Password Baru</label>
+            <div style="position:relative;">
+                <i class="ti ti-key" style="position:absolute; left:11px; top:50%; transform:translateY(-50%); font-size:15px; color:#94A3B8;"></i>
+                <input type="password" name="password" id="new_pass" placeholder="Min. 8 karakter"
+                       style="width:100%; border:1.5px solid #E2E8F0; border-radius:8px; padding:9px 34px 9px 34px; font-size:13px; color:#1E293B; outline:none; box-sizing:border-box;"
+                       onfocus="this.style.borderColor='#3B82F6';this.style.boxShadow='0 0 0 3px rgba(59,130,246,0.1)'"
+                       onblur="this.style.borderColor='#E2E8F0';this.style.boxShadow='none'"
+                       oninput="checkStrength(this.value)">
+                <button type="button" onclick="togglePass('new_pass','eye_new')" style="position:absolute; right:10px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; color:#94A3B8;">
+                    <i class="ti ti-eye" id="eye_new" style="font-size:15px;"></i>
+                </button>
+            </div>
+        </div>
+    </div>
 
-                    {{-- Tombol --}}
-                    <div>
-                        <button type="submit"
-                                style="width:100%; background:#DC2626; color:white; border:none; border-radius:8px; padding:9px 16px; font-size:13px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:7px;"
-                                onmouseover="this.style.background='#B91C1C'" onmouseout="this.style.background='#DC2626'">
-                            <i class="ti ti-shield-lock" style="font-size:15px;"></i> Update Password
-                        </button>
-                    </div>
-                </div>
+    {{-- Indikator kekuatan password: full width, DI LUAR grid input --}}
+    <div style="margin-bottom:16px;">
+        <div style="height:3px; background:#F1F5F9; border-radius:4px; overflow:hidden;">
+            <div id="sBar" style="height:100%; width:0; border-radius:4px; transition:all 0.3s;"></div>
+        </div>
+        <div id="sText" style="font-size:10px; color:#94A3B8; margin-top:2px; min-height:12px;"></div>
+    </div>
 
-                {{-- Tips --}}
-                <div style="background:#FFFBEB; border:1px solid #FDE68A; border-radius:8px; padding:10px 14px; display:flex; gap:8px; align-items:flex-start;">
-                    <i class="ti ti-bulb" style="font-size:16px; color:#D97706; flex-shrink:0; margin-top:1px;"></i>
-                    <div style="font-size:12px; color:#92400E; line-height:1.6;">
-                        Gunakan password yang kuat: minimal <strong>8 karakter</strong>, kombinasi huruf besar, angka, dan simbol.
-                    </div>
-                </div>
-            </form>
+    {{-- Tombol, baris terpisah, rata kanan seperti form profil --}}
+    <div style="display:flex; justify-content:flex-end; margin-bottom:14px;">
+        <button type="submit"
+                style="background:#DC2626; color:white; border:none; border-radius:8px; padding:9px 22px; font-size:13px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:7px;"
+                onmouseover="this.style.background='#B91C1C'" onmouseout="this.style.background='#DC2626'">
+            <i class="ti ti-shield-lock" style="font-size:15px;"></i> Update Password
+        </button>
+    </div>
+
+    {{-- Tips --}}
+    <div style="background:#FFFBEB; border:1px solid #FDE68A; border-radius:8px; padding:10px 14px; display:flex; gap:8px; align-items:flex-start;">
+        <i class="ti ti-bulb" style="font-size:16px; color:#D97706; flex-shrink:0; margin-top:1px;"></i>
+        <div style="font-size:12px; color:#92400E; line-height:1.6;">
+            Gunakan password yang kuat: minimal <strong>8 karakter</strong>, kombinasi huruf besar, angka, dan simbol.
+        </div>
+    </div>
+</form>
         </div>
 
     </div>
@@ -291,6 +339,11 @@
 </div>
 
 <script>
+function toggleSidebar() {
+    document.querySelector('.app-sidebar').classList.toggle('open');
+    document.getElementById('sidebarOverlay').classList.toggle('show');
+}
+
 function togglePass(id, eyeId) {
     const f = document.getElementById(id);
     const e = document.getElementById(eyeId);

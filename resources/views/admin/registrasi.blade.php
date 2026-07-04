@@ -3,10 +3,55 @@
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
 
+<style>
+    .app-sidebar { transition: transform 0.3s ease; }
+    .hamburger-btn { display: none; }
+
+    @media (max-width: 768px) {
+        .hamburger-btn {
+            display: flex;
+            position: fixed;
+            top: 14px; left: 14px;
+            z-index: 60;
+            width: 38px; height: 38px;
+            background: #1E3A8A;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        .app-sidebar { transform: translateX(-100%); }
+        .app-sidebar.open { transform: translateX(0); }
+        .app-main { margin-left: 0 !important; min-width: 0; }
+        .sidebar-overlay {
+            display: none;
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.4);
+            z-index: 45;
+        }
+        .sidebar-overlay.show { display: block; }
+
+        .topbar-sticky { padding-left: 56px !important; flex-wrap: wrap; gap: 8px !important; }
+        .content-area { padding: 16px !important; }
+        .page-title { font-size: 17px !important; }
+        .form-card-header { padding: 14px 16px !important; }
+        .form-body { padding: 16px !important; }
+        .form-grid { grid-template-columns: 1fr !important; gap: 14px !important; }
+    }
+</style>
+
+<button class="hamburger-btn" onclick="toggleSidebar()" aria-label="Buka menu">
+    <i class="ti ti-menu-2"></i>
+</button>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
 {{-- ═══════════════════════════════════════════
      SIDEBAR
 ═══════════════════════════════════════════ --}}
-<aside style="width:240px; background:linear-gradient(160deg,#0F172A 0%,#1E3A5F 60%,#1D4ED8 100%); color:white; position:fixed; top:0; left:0; height:100vh; display:flex; flex-direction:column; box-shadow:4px 0 24px rgba(0,0,0,0.18); z-index:50;">
+<aside class="app-sidebar" style="width:240px; background:linear-gradient(160deg,#0F172A 0%,#1E3A5F 60%,#1D4ED8 100%); color:white; position:fixed; top:0; left:0; height:100vh; display:flex; flex-direction:column; box-shadow:4px 0 24px rgba(0,0,0,0.18); z-index:50;">
 
     {{-- Brand --}}
     <div style="padding:22px 20px 16px; border-bottom:1px solid rgba(255,255,255,0.08);">
@@ -96,10 +141,10 @@
 {{-- ═══════════════════════════════════════════
      MAIN CONTENT
 ═══════════════════════════════════════════ --}}
-<main style="flex:1; margin-left:240px; display:flex; flex-direction:column; min-height:100vh;">
+<main class="app-main" style="flex:1; margin-left:240px; display:flex; flex-direction:column; min-height:100vh;">
 
     {{-- Top Bar --}}
-    <div style="background:white; border-bottom:1px solid #E2E8F0; padding:13px 28px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:40; box-shadow:0 1px 3px rgba(0,0,0,0.04);">
+    <div class="topbar-sticky" style="background:white; border-bottom:1px solid #E2E8F0; padding:13px 28px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:40; box-shadow:0 1px 3px rgba(0,0,0,0.04);">
         <div style="display:flex; align-items:center; gap:10px;">
             <a href="{{ route('admin.dashboard') }}" style="color:#94A3B8; text-decoration:none; font-size:13px; display:flex; align-items:center; gap:4px;"
                onmouseover="this.style.color='#1D4ED8'" onmouseout="this.style.color='#94A3B8'">
@@ -114,11 +159,11 @@
         </div>
     </div>
 
-    <div style="padding:28px; max-width:860px; width:100%;">
+    <div class="content-area" style="padding:28px; max-width:860px; width:100%;">
 
         {{-- Page Header --}}
         <div style="margin-bottom:24px;">
-            <h1 style="font-size:20px; font-weight:700; color:#0F172A; margin:0 0 4px;">Registrasi Guru Baru</h1>
+            <h1 class="page-title" style="font-size:20px; font-weight:700; color:#0F172A; margin:0 0 4px;">Registrasi Guru Baru</h1>
             <p class="text-xs text-gray-500 mt-0.5">Buat akun guru baru untuk mengakses sistem presensi. Semua kolom bertanda * wajib diisi.</p>
         </div>
 
@@ -149,7 +194,7 @@
         <div style="background:white; border-radius:14px; border:1px solid #E2E8F0; overflow:hidden; box-shadow:0 1px 6px rgba(0,0,0,0.06);">
 
             {{-- Card Header --}}
-            <div style="padding:18px 24px; border-bottom:1px solid #F1F5F9; display:flex; align-items:center; gap:12px; background:#FAFBFC;">
+            <div class="form-card-header" style="padding:18px 24px; border-bottom:1px solid #F1F5F9; display:flex; align-items:center; gap:12px; background:#FAFBFC;">
                 <div style="width:36px; height:36px; background:#EFF6FF; border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
                     <i class="ti ti-user-plus" style="font-size:18px; color:#2563EB;"></i>
                 </div>
@@ -160,10 +205,10 @@
             </div>
 
             {{-- Form Body --}}
-            <form action="{{ route('guru.store') }}" method="POST" style="padding:24px;" id="registrasiForm">
+            <form action="{{ route('guru.store') }}" method="POST" class="form-body" style="padding:24px;" id="registrasiForm">
                 @csrf
 
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:18px;">
+                <div class="form-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:18px;">
 
                     {{-- NAMA --}}
                     <div style="grid-column:1/-1;">
@@ -207,8 +252,6 @@
                         @enderror
                     </div>
 
-                    
-
                 </div>
 
                 {{-- Divider --}}
@@ -217,7 +260,7 @@
                     <div style="flex:1; height:1px; background:#F1F5F9;"></div>
                 </div>
 
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:18px;">
+                <div class="form-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:18px;">
 
                     {{-- PASSWORD --}}
                     <div>
@@ -307,6 +350,11 @@
 </div>
 
 <script>
+function toggleSidebar() {
+    document.querySelector('.app-sidebar').classList.toggle('open');
+    document.getElementById('sidebarOverlay').classList.toggle('show');
+}
+
 function togglePass(fieldId, btnId) {
     const field = document.getElementById(fieldId);
     const btn   = document.getElementById(btnId).querySelector('i');

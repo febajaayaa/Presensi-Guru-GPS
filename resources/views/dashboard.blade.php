@@ -1,5 +1,51 @@
 <x-app-layout>
 
+<style>
+    .app-sidebar { transition: transform 0.3s ease; }
+    .hamburger-btn { display: none; }
+
+    @media (max-width: 768px) {
+        .hamburger-btn {
+            display: flex;
+            position: fixed;
+            top: 14px;
+            left: 14px;
+            z-index: 60;
+            width: 38px; height: 38px;
+            background: #1E3A8A;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        .app-sidebar {
+            transform: translateX(-100%);
+        }
+        .app-sidebar.open {
+            transform: translateX(0);
+        }
+        .app-main {
+            margin-left: 0 !important;
+        }
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.4);
+            z-index: 45;
+        }
+        .sidebar-overlay.show { display: block; }
+    }
+</style>
+
+<button class="hamburger-btn" onclick="toggleSidebar()" aria-label="Buka menu">
+    <i class="ti ti-menu-2"></i>
+</button>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
 
 @php $user = auth()->user(); @endphp
@@ -7,7 +53,7 @@
 <div style="display:flex; min-height:100vh; background:#F0F4F8; font-family:'Inter',sans-serif;">
 
 {{-- ═══════════ SIDEBAR ═══════════ --}}
-<aside style="width:220px; min-width:220px; background:#1E3A8A; position:fixed; top:0; left:0; height:100vh; display:flex; flex-direction:column; z-index:50; box-shadow:4px 0 16px rgba(0,0,0,0.12);">
+<aside class="app-sidebar" style="width:220px; min-width:220px; background:#1E3A8A; position:fixed; top:0; left:0; height:100vh; display:flex; flex-direction:column; z-index:50; box-shadow:4px 0 16px rgba(0,0,0,0.12);">
 
     <div style="padding:20px 14px 12px; border-bottom:1px solid rgba(255,255,255,0.08);">
         <a href="{{ route('pengaturan') }}" style="display:flex; align-items:center; gap:10px; padding:10px; border-radius:10px; text-decoration:none; background:rgba(255,255,255,0.06);"
@@ -62,7 +108,7 @@
 </aside>
 
 {{-- ═══════════ MAIN ═══════════ --}}
-<main style="flex:1; margin-left:220px; min-height:100vh; display:flex; flex-direction:column;">
+<main class="app-main" style="flex:1; margin-left:220px; min-height:100vh; display:flex; flex-direction:column;">
 
     {{-- Top Bar --}}
     <div style="background:white; border-bottom:1px solid #E2E8F0; padding:10px 24px; display:flex; align-items:center; justify-content:flex-end; position:sticky; top:0; z-index:40; box-shadow:0 1px 3px rgba(0,0,0,0.04);">
@@ -83,7 +129,7 @@
             </div>
         </div>
 
-        <div class="grid gap-4" style="grid-template-columns: 1fr 220px;">
+        <div class="grid gap-4 grid-cols-1 lg:grid-cols-[1fr_220px]">
 
             {{-- Kolom Kiri --}}
             <div class="space-y-4">
@@ -177,8 +223,8 @@
                     </div>
                 </div>
 
-                {{-- ✅ FIX: grid-cols-5 agar semua stat sejajar dalam 1 baris --}}
-                <div class="grid grid-cols-5 gap-3">
+                {{-- Stat cards: 2 kolom di HP, 5 kolom di layar >= sm --}}
+                <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
                     @php
                     $stats = [
                         ['val' => $hadir     ?? 0, 'label' => 'Hadir',     'color' => 'text-green-600', 'bg' => 'bg-green-50'],
@@ -348,6 +394,11 @@
 ================================================================== --}}
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
+function toggleSidebar() {
+    document.querySelector('.app-sidebar').classList.toggle('open');
+    document.getElementById('sidebarOverlay').classList.toggle('show');
+}
+
 function showPopup(id)  { const el = document.getElementById('popup-'+id); if(el){ el.classList.remove('hidden'); el.classList.add('flex'); } }
 function closePopup(id) { const el = document.getElementById('popup-'+id); if(el){ el.classList.add('hidden');    el.classList.remove('flex'); } }
 

@@ -1,14 +1,79 @@
 <x-app-layout>
+
+<style>
+    .app-sidebar { transition: transform 0.3s ease; }
+    .hamburger-btn { display: none; }
+
+    .stat-grid-5 {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 14px;
+    }
+    .charts-grid {
+        display: grid;
+        grid-template-columns: 1fr 1.8fr;
+        gap: 18px;
+    }
+
+    @media (max-width: 768px) {
+        .hamburger-btn {
+            display: flex;
+            position: fixed;
+            top: 14px;
+            left: 14px;
+            z-index: 60;
+            width: 38px; height: 38px;
+            background: #1E3A8A;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        .app-sidebar {
+            transform: translateX(-100%);
+        }
+        .app-sidebar.open {
+            transform: translateX(0);
+        }
+        .app-main {
+            margin-left: 0 !important;
+        }
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.4);
+            z-index: 45;
+        }
+        .sidebar-overlay.show { display: block; }
+
+        .stat-grid-5 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        .charts-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<button class="hamburger-btn" onclick="toggleSidebar()" aria-label="Buka menu">
+    <i class="ti ti-menu-2"></i>
+</button>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
 <div class="flex min-h-screen" style="background:#F0F4F8; font-family:'Inter',sans-serif;">
- 
+
 {{-- Link Tabler Icons --}}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
- 
+
 {{-- ═══════════════════════════════════════════
      SIDEBAR
 ═══════════════════════════════════════════ --}}
-<aside style="width:240px; background:linear-gradient(160deg,#0F172A 0%,#1E3A5F 60%,#1D4ED8 100%); color:white; position:fixed; top:0; left:0; height:100vh; display:flex; flex-direction:column; box-shadow:4px 0 24px rgba(0,0,0,0.18); z-index:50;">
- 
+<aside class="app-sidebar" style="width:240px; background:linear-gradient(160deg,#0F172A 0%,#1E3A5F 60%,#1D4ED8 100%); color:white; position:fixed; top:0; left:0; height:100vh; display:flex; flex-direction:column; box-shadow:4px 0 24px rgba(0,0,0,0.18); z-index:50;">
+
     {{-- Brand --}}
     <div style="padding:22px 20px 16px; border-bottom:1px solid rgba(255,255,255,0.08);">
         <div style="display:flex; align-items:center; gap:10px;">
@@ -21,17 +86,17 @@
             </div>
         </div>
     </div>
- 
+
     {{-- Profil --}}
     <a href="{{ route('admin.pengaturan') }}"
        style="display:flex; align-items:center; gap:10px; margin:16px 14px 6px; padding:10px 12px; border-radius:10px; background:rgba(255,255,255,0.06); text-decoration:none;"
        onmouseover="this.style.background='rgba(255,255,255,0.12)'"
        onmouseout="this.style.background='rgba(255,255,255,0.06)'">
- 
+
         <img src="{{ Auth::user()->photo ? asset('storage/'.Auth::user()->photo) : 'https://i.pravatar.cc/50' }}"
              alt="Foto {{ Auth::user()->name }}"
              style="width:38px; height:38px; border-radius:50%; object-fit:cover; border:2px solid #3B82F6; flex-shrink:0;">
- 
+
         <div style="overflow:hidden;">
             <div style="font-size:13px; font-weight:600; color:#F1F5F9; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
                 {{ Auth::user()->name }}
@@ -42,11 +107,11 @@
             </div>
         </div>
     </a>
- 
+
     {{-- Nav --}}
     <nav style="flex:1; padding:6px 14px; overflow-y:auto;">
         <div style="font-size:9px; color:#475569; letter-spacing:0.1em; text-transform:uppercase; padding:12px 8px 6px;">Menu Utama</div>
- 
+
         @php
         $navItems = [
             ['label' => 'Beranda',        'route' => 'admin.dashboard',  'icon' => 'ti-layout-dashboard'],
@@ -57,7 +122,7 @@
             ['label' => 'Pengaturan',      'route' => 'admin.pengaturan', 'icon' => 'ti-settings'],
         ];
         @endphp
- 
+
         @foreach($navItems as $item)
             @php
                 $isActive = isset($item['route'])
@@ -65,7 +130,7 @@
                     : request()->is(ltrim($item['url'], '/'));
                 $href = isset($item['route']) ? route($item['route']) : $item['url'];
             @endphp
- 
+
             <a href="{{ $href }}"
                style="display:flex; align-items:center; gap:9px; padding:9px 10px; border-radius:8px; font-size:13px; text-decoration:none; margin-bottom:2px; transition:all 0.15s;
                       border-left:2px solid {{ $isActive ? '#3B82F6' : 'transparent' }};
@@ -73,13 +138,13 @@
                       color:{{ $isActive ? '#F1F5F9' : '#94A3B8' }};"
                onmouseover="this.style.background='{{ $isActive ? 'rgba(59,130,246,0.18)' : 'rgba(255,255,255,0.07)' }}';this.style.color='#F1F5F9'"
                onmouseout="this.style.background='{{ $isActive ? 'rgba(59,130,246,0.18)' : 'transparent' }}';this.style.color='{{ $isActive ? '#F1F5F9' : '#94A3B8' }}'">
- 
+
                 <i class="ti {{ $item['icon'] }}" style="font-size:17px; flex-shrink:0; width:20px; text-align:center;"></i>
                 {{ $item['label'] }}
             </a>
         @endforeach
     </nav>
- 
+
     {{-- Logout --}}
     <div style="padding:14px;">
         <form method="POST" action="{{ route('logout') }}">
@@ -93,18 +158,18 @@
         </form>
     </div>
 </aside>
- 
+
 {{-- ═══════════════════════════════════════════
      MAIN CONTENT
 ═══════════════════════════════════════════ --}}
-<main style="flex:1; margin-left:240px; display:flex; flex-direction:column; min-height:100vh;">
+<main class="app-main" style="flex:1; margin-left:240px; display:flex; flex-direction:column; min-height:100vh;">
 
     {{-- Top Bar --}}
-    <div style="background:white; border-bottom:1px solid #E2E8F0; padding:13px 28px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:40; box-shadow:0 1px 3px rgba(0,0,0,0.04);">
+    <div style="background:white; border-bottom:1px solid #E2E8F0; padding:13px 28px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:40; box-shadow:0 1px 3px rgba(0,0,0,0.04); flex-wrap:wrap; gap:10px;">
         <div>
             <h1 style="font-size:17px; font-weight:700; color:#0F172A; margin:0;">Dashboard Presensi</h1>
         </div>
-        <div style="display:flex; align-items:center; gap:12px;">
+        <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
             {{-- Tanggal --}}
             <div style="background:#F8FAFC; border:1px solid #E2E8F0; padding:8px 14px; border-radius:8px; font-size:12px; color:#475569; display:flex; align-items:center; gap:6px;">
                 <i class="ti ti-calendar" style="font-size:14px; color:#64748B;"></i>
@@ -125,8 +190,8 @@
     <div style="padding:24px 28px; display:flex; flex-direction:column; gap:20px;">
 
         {{-- ── INFO SEKOLAH ── --}}
-        <div style="background:white; border-radius:12px; border:1px solid #E2E8F0; padding:20px 24px; display:flex; align-items:center; gap:20px;">
-    
+        <div style="background:white; border-radius:12px; border:1px solid #E2E8F0; padding:20px 24px; display:flex; align-items:center; gap:20px; flex-wrap:wrap;">
+
             {{-- Logo --}}
             <div style="width:72px; height:72px; border-radius:10px; border:1px solid #E2E8F0; background:#F8FAFC; display:flex; align-items:center; justify-content:center; overflow:hidden; flex-shrink:0;">
                 @if($school && $school->logo)
@@ -137,11 +202,11 @@
             </div>
 
             {{-- Info --}}
-            <div style="flex:1;">
+            <div style="flex:1; min-width:200px;">
                 <div style="font-size:16px; font-weight:700; color:#1D4ED8; margin-bottom:4px;">
                     {{ $school ? strtoupper($school->nama_sekolah) : 'Nama Sekolah' }}
                 </div>
-                <div style="display:flex; gap:16px; font-size:12px; color:#64748B; margin-bottom:6px;">
+                <div style="display:flex; gap:16px; font-size:12px; color:#64748B; margin-bottom:6px; flex-wrap:wrap;">
                     @if($school)
                         <span>NPSN: {{ $school->npsn ?? '-' }}</span>
                         <span style="color:#E2E8F0;">|</span>
@@ -164,7 +229,7 @@
         </div>
 
         {{-- ── STAT CARDS ── --}}
-        <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:14px;">
+        <div class="stat-grid-5">
 
             <div style="background:white; border-radius:12px; border:1px solid #E2E8F0; border-top:3px solid #2563EB; padding:18px 16px;">
                 <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
@@ -222,9 +287,9 @@
             </div>
 
         </div>
-        
+
         {{-- ── CHARTS ── --}}
-        <div style="display:grid; grid-template-columns:1fr 1.8fr; gap:18px;">
+        <div class="charts-grid">
 
             {{-- Donut --}}
             <div style="background:white; border-radius:12px; border:1px solid #E2E8F0; padding:20px 24px;">
@@ -250,12 +315,12 @@
 
             {{-- Bar --}}
             <div style="background:white; border-radius:12px; border:1px solid #E2E8F0; padding:20px 24px;">
-                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;">
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; flex-wrap:wrap; gap:8px;">
                     <div>
                         <div style="font-size:14px; font-weight:600; color:#0F172A;">Rekap Tahunan</div>
                         <div style="font-size:12px; color:#94A3B8; margin-top:2px;">Grafik kehadiran selama 1 tahun</div>
                     </div>
-                    <div style="display:flex; align-items:center; gap:12px;">
+                    <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
                         <div style="display:flex; align-items:center; gap:5px; font-size:11px; color:#64748B;">
                             <span style="width:10px;height:10px;background:#16A34A;border-radius:2px;display:inline-block;"></span> Hadir
                         </div>
@@ -274,7 +339,7 @@
 
         {{-- ── TABEL RIWAYAT ── --}}
         <div style="background:white; border-radius:12px; border:1px solid #E2E8F0; overflow:hidden;">
-            <div style="padding:16px 20px; border-bottom:1px solid #F1F5F9; display:flex; align-items:center; justify-content:space-between;">
+            <div style="padding:16px 20px; border-bottom:1px solid #F1F5F9; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
                 <div>
                     <div style="font-size:14px; font-weight:600; color:#0F172A;">Riwayat Kehadiran Guru</div>
                     <div style="font-size:12px; color:#94A3B8; margin-top:2px;">Data presensi terbaru</div>
@@ -284,7 +349,7 @@
                 </a>
             </div>
             <div style="overflow-x:auto;">
-                <table style="width:100%; border-collapse:collapse; font-size:13px;">
+                <table style="width:100%; border-collapse:collapse; font-size:13px; min-width:560px;">
                     <thead>
                         <tr style="background:#F8FAFC;">
                             <th style="text-align:left; padding:11px 18px; font-size:11px; font-weight:600; color:#64748B; letter-spacing:0.04em; text-transform:uppercase;">Nama Guru</th>
@@ -356,6 +421,11 @@
 {{-- ═══════════════ SCRIPTS ═══════════════ --}}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+function toggleSidebar() {
+    document.querySelector('.app-sidebar').classList.toggle('open');
+    document.getElementById('sidebarOverlay').classList.toggle('show');
+}
+
 // DONUT
 new Chart(document.getElementById('donutChart'), {
     type: 'doughnut',

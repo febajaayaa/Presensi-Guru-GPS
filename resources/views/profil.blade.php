@@ -18,7 +18,7 @@ class="rounded-full w-10 h-10 object-cover">
 
 <div>
     <h2 class="font-semibold">{{ $user->name ?? 'Guest' }}</h2>
-    <p class="text-sm opacity-80">Mahasiswa PTI</p>
+    <p class="text-sm opacity-80">Admin</p>
 </div>
 
 </a>

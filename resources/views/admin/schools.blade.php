@@ -1,4 +1,44 @@
 <x-app-layout>
+
+<style>
+    .app-sidebar { transition: transform 0.3s ease; }
+    .hamburger-btn { display: none; }
+
+    @media (max-width: 768px) {
+        .hamburger-btn {
+            display: flex;
+            position: fixed;
+            top: 14px; left: 14px;
+            z-index: 60;
+            width: 38px; height: 38px;
+            background: #1E3A8A;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        .app-sidebar { transform: translateX(-100%); }
+        .app-sidebar.open { transform: translateX(0); }
+        .app-main { margin-left: 0 !important; min-width: 0; }
+        .sidebar-overlay {
+            display: none;
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.4);
+            z-index: 45;
+        }
+        .sidebar-overlay.show { display: block; }
+        .stat-grid { grid-template-columns: 1fr 1fr !important; }
+    }
+</style>
+
+<button class="hamburger-btn" onclick="toggleSidebar()" aria-label="Buka menu">
+    <i class="ti ti-menu-2"></i>
+</button>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
 <div class="flex min-h-screen" style="background:#F0F4F8; font-family:'Inter',sans-serif;">
 
 {{-- Tabler Icons --}}
@@ -7,7 +47,7 @@
 {{-- ═══════════════════════════════════════════
      SIDEBAR
 ═══════════════════════════════════════════ --}}
-<aside style="width:240px; background:linear-gradient(160deg,#0F172A 0%,#1E3A5F 60%,#1D4ED8 100%); color:white; position:fixed; top:0; left:0; height:100vh; display:flex; flex-direction:column; box-shadow:4px 0 24px rgba(0,0,0,0.18); z-index:50;">
+<aside class="app-sidebar" style="width:240px; background:linear-gradient(160deg,#0F172A 0%,#1E3A5F 60%,#1D4ED8 100%); color:white; position:fixed; top:0; left:0; height:100vh; display:flex; flex-direction:column; box-shadow:4px 0 24px rgba(0,0,0,0.18); z-index:50;">
 
     {{-- Brand --}}
     <div style="padding:22px 20px 16px; border-bottom:1px solid rgba(255,255,255,0.08);">
@@ -87,7 +127,7 @@
 {{-- ═══════════════════════════════════════════
      MAIN CONTENT
 ═══════════════════════════════════════════ --}}
-<div style="flex:1; margin-left:240px; padding:24px 28px;">
+<div class="app-main" style="flex:1; margin-left:240px; padding:24px 28px;">
 
     {{-- BREADCRUMB --}}
     <nav style="display:flex; align-items:center; gap:6px; font-size:12px; color:#94A3B8; margin-bottom:20px;">
@@ -105,7 +145,7 @@
     @endif
 
     {{-- PAGE HEADER --}}
-    <div style="display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:20px;">
+    <div style="display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:20px; flex-wrap:wrap; gap:12px;">
         <div>
             <div style="font-size:11px; color:#64748B; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:4px;">Admin Panel</div>
             <h1 style="font-size:22px; font-weight:700; color:#0F172A; margin:0; display:flex; align-items:center; gap:9px;">
@@ -123,7 +163,7 @@
     </div>
 
     {{-- STAT CARDS --}}
-    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:20px;">
+    <div class="stat-grid" style="display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:20px;">
         <div style="background:white; border:1px solid #E2E8F0; border-top:3px solid #3B82F6; border-radius:12px; padding:16px 18px; box-shadow:0 1px 4px rgba(0,0,0,0.05);">
             <div style="display:flex; justify-content:space-between; align-items:center;">
                 <div>
@@ -166,8 +206,8 @@
     </div>
 
     {{-- DAFTAR SEKOLAH --}}
-    <div style="background:white; border:1px solid #E2E8F0; border-radius:14px; overflow:hidden; box-shadow:0 1px 6px rgba(0,0,0,0.06);">
-        <table style="width:100%; border-collapse:collapse; font-size:13px;">
+    <div style="background:white; border:1px solid #E2E8F0; border-radius:14px; overflow:hidden; box-shadow:0 1px 6px rgba(0,0,0,0.06); overflow-x:auto;">
+        <table style="width:100%; border-collapse:collapse; font-size:13px; min-width:640px;">
             <thead>
                 <tr style="background:#3B82F6;">
                     <th style="padding:13px 16px; text-align:left; color:#fff; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; width:40px;"></th>
@@ -260,5 +300,12 @@
 
 </div>
 </div>
+
+<script>
+function toggleSidebar() {
+    document.querySelector('.app-sidebar').classList.toggle('open');
+    document.getElementById('sidebarOverlay').classList.toggle('show');
+}
+</script>
 
 </x-app-layout>

@@ -48,15 +48,15 @@
         <div style="font-size:9px; color:#475569; letter-spacing:0.1em; text-transform:uppercase; padding:12px 8px 6px;">Menu Utama</div>
  
         @php
-        $navItems = [
-            ['label' => 'Beranda',        'route' => 'admin.dashboard',  'icon' => 'ti-layout-dashboard'],
-            ['label' => 'Data Guru',       'route' => 'guru.index',       'icon' => 'ti-users'],
-            ['label' => 'Rekap Presensi',  'route' => 'admin.rekap',      'icon' => 'ti-clipboard-list'],
-            ['label' => 'Registrasi Guru', 'route' => 'admin.registrasi', 'icon' => 'ti-user-plus'],
-            ['label' => 'Persetujuan',     'url'   => '/admin/izin',      'icon' => 'ti-checkbox'],
-            ['label' => 'Pengaturan',      'route' => 'admin.pengaturan', 'icon' => 'ti-settings'],
-        ];
-        @endphp
+$navItems = [
+    ['label' => 'Beranda',        'route' => 'admin.dashboard',   'icon' => 'ti-layout-dashboard'],
+    ['label' => 'Data Guru',       'route' => 'guru.index',        'icon' => 'ti-users'],
+    ['label' => 'Rekap Presensi',  'route' => 'admin.rekap',       'icon' => 'ti-clipboard-list'],
+    ['label' => 'Registrasi Guru', 'route' => 'admin.registrasi',  'icon' => 'ti-user-plus'],
+    ['label' => 'Persetujuan',     'route' => 'izin.index',        'icon' => 'ti-checkbox'],
+    ['label' => 'Pengaturan',      'route' => 'admin.pengaturan',  'icon' => 'ti-settings'],
+];
+@endphp
  
         @foreach($navItems as $item)
             @php
@@ -116,7 +116,7 @@
         {{-- Page Header --}}
         <div style="margin-bottom:24px;">
             <h1 style="font-size:20px; font-weight:700; color:#0F172A; margin:0 0 4px;">Pengaturan Akun</h1>
-            <p class="text-xs text-gray-500 mt-0.5">>Kelola profil, informasi sekolah, dan keamanan akun Anda.</p>
+            <p class="text-xs text-gray-500 mt-0.5">Kelola profil, informasi sekolah, dan keamanan akun Anda.</p>
         </div>
 
         {{-- Alert Success --}}
@@ -260,66 +260,68 @@
             </div>
 
             <form method="POST" action="{{ route('pengaturan.password') }}" style="padding:20px;">
-                @csrf
+    @csrf
 
+    {{-- Baris input: password lama & baru sejajar tingginya --}}
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:6px;">
 
-                <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; align-items:end; margin-bottom:14px;">
+        {{-- Password lama --}}
+        <div>
+            <label style="display:block; font-size:11px; font-weight:600; color:#374151; margin-bottom:5px; letter-spacing:0.04em; text-transform:uppercase;">Password Saat Ini</label>
+            <div style="position:relative;">
+                <i class="ti ti-lock" style="position:absolute; left:11px; top:50%; transform:translateY(-50%); font-size:15px; color:#94A3B8;"></i>
+                <input type="password" name="current_password" id="cur_pass" placeholder="••••••••"
+                       style="width:100%; border:1.5px solid #E2E8F0; border-radius:8px; padding:9px 34px 9px 34px; font-size:13px; color:#1E293B; outline:none; box-sizing:border-box;"
+                       onfocus="this.style.borderColor='#3B82F6';this.style.boxShadow='0 0 0 3px rgba(59,130,246,0.1)'"
+                       onblur="this.style.borderColor='#E2E8F0';this.style.boxShadow='none'">
+                <button type="button" onclick="togglePass('cur_pass','eye_cur')" style="position:absolute; right:10px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; color:#94A3B8;">
+                    <i class="ti ti-eye" id="eye_cur" style="font-size:15px;"></i>
+                </button>
+            </div>
+        </div>
 
-                    {{-- Password lama --}}
-                    <div>
-                        <label style="display:block; font-size:11px; font-weight:600; color:#374151; margin-bottom:5px; letter-spacing:0.04em; text-transform:uppercase;">Password Saat Ini</label>
-                        <div style="position:relative;">
-                            <i class="ti ti-lock" style="position:absolute; left:11px; top:50%; transform:translateY(-50%); font-size:15px; color:#94A3B8;"></i>
-                            <input type="password" name="current_password" id="cur_pass" placeholder="••••••••"
-                                   style="width:100%; border:1.5px solid #E2E8F0; border-radius:8px; padding:9px 34px 9px 34px; font-size:13px; color:#1E293B; outline:none; box-sizing:border-box;"
-                                   onfocus="this.style.borderColor='#3B82F6';this.style.boxShadow='0 0 0 3px rgba(59,130,246,0.1)'"
-                                   onblur="this.style.borderColor='#E2E8F0';this.style.boxShadow='none'">
-                            <button type="button" onclick="togglePass('cur_pass','eye_cur')" style="position:absolute; right:10px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; color:#94A3B8;">
-                                <i class="ti ti-eye" id="eye_cur" style="font-size:15px;"></i>
-                            </button>
-                        </div>
-                    </div>
+        {{-- Password baru --}}
+        <div>
+            <label style="display:block; font-size:11px; font-weight:600; color:#374151; margin-bottom:5px; letter-spacing:0.04em; text-transform:uppercase;">Password Baru</label>
+            <div style="position:relative;">
+                <i class="ti ti-key" style="position:absolute; left:11px; top:50%; transform:translateY(-50%); font-size:15px; color:#94A3B8;"></i>
+                <input type="password" name="password" id="new_pass" placeholder="Min. 8 karakter"
+                       style="width:100%; border:1.5px solid #E2E8F0; border-radius:8px; padding:9px 34px 9px 34px; font-size:13px; color:#1E293B; outline:none; box-sizing:border-box;"
+                       onfocus="this.style.borderColor='#3B82F6';this.style.boxShadow='0 0 0 3px rgba(59,130,246,0.1)'"
+                       onblur="this.style.borderColor='#E2E8F0';this.style.boxShadow='none'"
+                       oninput="checkStrength(this.value)">
+                <button type="button" onclick="togglePass('new_pass','eye_new')" style="position:absolute; right:10px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; color:#94A3B8;">
+                    <i class="ti ti-eye" id="eye_new" style="font-size:15px;"></i>
+                </button>
+            </div>
+        </div>
+    </div>
 
-                    {{-- Password baru --}}
-                    <div>
-                        <label style="display:block; font-size:11px; font-weight:600; color:#374151; margin-bottom:5px; letter-spacing:0.04em; text-transform:uppercase;">Password Baru</label>
-                        <div style="position:relative;">
-                            <i class="ti ti-key" style="position:absolute; left:11px; top:50%; transform:translateY(-50%); font-size:15px; color:#94A3B8;"></i>
-                            <input type="password" name="password" id="new_pass" placeholder="Min. 8 karakter"
-                                   style="width:100%; border:1.5px solid #E2E8F0; border-radius:8px; padding:9px 34px 9px 34px; font-size:13px; color:#1E293B; outline:none; box-sizing:border-box;"
-                                   onfocus="this.style.borderColor='#3B82F6';this.style.boxShadow='0 0 0 3px rgba(59,130,246,0.1)'"
-                                   onblur="this.style.borderColor='#E2E8F0';this.style.boxShadow='none'"
-                                   oninput="checkStrength(this.value)">
-                            <button type="button" onclick="togglePass('new_pass','eye_new')" style="position:absolute; right:10px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; color:#94A3B8;">
-                                <i class="ti ti-eye" id="eye_new" style="font-size:15px;"></i>
-                            </button>
-                        </div>
-                        <div style="margin-top:5px;">
-                            <div style="height:3px; background:#F1F5F9; border-radius:4px; overflow:hidden;">
-                                <div id="sBar" style="height:100%; width:0; border-radius:4px; transition:all 0.3s;"></div>
-                            </div>
-                            <div id="sText" style="font-size:10px; color:#94A3B8; margin-top:2px;"></div>
-                        </div>
-                    </div>
+    {{-- Indikator kekuatan password: full width, DI LUAR grid input --}}
+    <div style="margin-bottom:16px;">
+        <div style="height:3px; background:#F1F5F9; border-radius:4px; overflow:hidden;">
+            <div id="sBar" style="height:100%; width:0; border-radius:4px; transition:all 0.3s;"></div>
+        </div>
+        <div id="sText" style="font-size:10px; color:#94A3B8; margin-top:2px; min-height:12px;"></div>
+    </div>
 
-                    {{-- Tombol --}}
-                    <div>
-                        <button type="submit"
-                                style="width:100%; background:#DC2626; color:white; border:none; border-radius:8px; padding:9px 16px; font-size:13px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:7px;"
-                                onmouseover="this.style.background='#B91C1C'" onmouseout="this.style.background='#DC2626'">
-                            <i class="ti ti-shield-lock" style="font-size:15px;"></i> Update Password
-                        </button>
-                    </div>
-                </div>
+    {{-- Tombol, baris terpisah, rata kanan seperti form profil --}}
+    <div style="display:flex; justify-content:flex-end; margin-bottom:14px;">
+        <button type="submit"
+                style="background:#DC2626; color:white; border:none; border-radius:8px; padding:9px 22px; font-size:13px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:7px;"
+                onmouseover="this.style.background='#B91C1C'" onmouseout="this.style.background='#DC2626'">
+            <i class="ti ti-shield-lock" style="font-size:15px;"></i> Update Password
+        </button>
+    </div>
 
-                {{-- Tips --}}
-                <div style="background:#FFFBEB; border:1px solid #FDE68A; border-radius:8px; padding:10px 14px; display:flex; gap:8px; align-items:flex-start;">
-                    <i class="ti ti-bulb" style="font-size:16px; color:#D97706; flex-shrink:0; margin-top:1px;"></i>
-                    <div style="font-size:12px; color:#92400E; line-height:1.6;">
-                        Gunakan password yang kuat: minimal <strong>8 karakter</strong>, kombinasi huruf besar, angka, dan simbol.
-                    </div>
-                </div>
-            </form>
+    {{-- Tips --}}
+    <div style="background:#FFFBEB; border:1px solid #FDE68A; border-radius:8px; padding:10px 14px; display:flex; gap:8px; align-items:flex-start;">
+        <i class="ti ti-bulb" style="font-size:16px; color:#D97706; flex-shrink:0; margin-top:1px;"></i>
+        <div style="font-size:12px; color:#92400E; line-height:1.6;">
+            Gunakan password yang kuat: minimal <strong>8 karakter</strong>, kombinasi huruf besar, angka, dan simbol.
+        </div>
+    </div>
+</form>
         </div>
 
     </div>
