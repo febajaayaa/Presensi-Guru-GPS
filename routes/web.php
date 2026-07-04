@@ -49,6 +49,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/pengaturan', [PresensiController::class, 'pengaturan'])->name('pengaturan');
     Route::post('/pengaturan/update', [PresensiController::class, 'updateProfil'])->name('pengaturan.update');
 
+    // khusus update password (hindari ikut validasi field "name" di ProfileUpdateRequest)
+    Route::post('/pengaturan/password', [PresensiController::class, 'updatePassword'])->name('pengaturan.password');
+
     Route::get('/profil', [ProfileController::class, 'edit'])->name('profil');
     Route::patch('/profil/update', [ProfileController::class, 'update'])->name('profil.update');
     Route::post('/profil/password', [ProfileController::class, 'updatePassword'])->name('profil.password');

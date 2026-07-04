@@ -259,8 +259,9 @@
                 </div>
             </div>
 
-            <form method="POST" action="{{ route('pengaturan.update') }}" style="padding:20px;">
+            <form method="POST" action="{{ route('pengaturan.password') }}" style="padding:20px;">
                 @csrf
+
 
                 <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; align-items:end; margin-bottom:14px;">
 

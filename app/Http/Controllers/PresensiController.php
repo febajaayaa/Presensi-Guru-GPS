@@ -285,14 +285,8 @@ public function kalender()
         $user->email = $request->email;
     }
 
-    // Update password hanya jika diisi
-    if ($request->password) {
-        // Cek password lama dulu
-        if ($request->current_password && !\Hash::check($request->current_password, $user->password)) {
-            return back()->withErrors(['current_password' => 'Password saat ini salah']);
-        }
-        $user->password = bcrypt($request->password);
-    }
+    // NOTE: update password dipindahkan ke route khusus /pengaturan/password
+    // (supaya validasi tidak terganggu ketika form password mengirim field yang berbeda)
 
     // Upload foto
     if ($request->hasFile('photo')) {
@@ -305,7 +299,25 @@ public function kalender()
     $user->save();
 
     return back()->with('success', 'Profil berhasil diperbarui');
-}   
+}
+
+        // =========================
+        // UPDATE PASSWORD (khusus)
+        // =========================
+        public function updatePassword(Request $request)
+        {
+            $request->validate([
+                'current_password' => ['required', 'current_password'],
+                'password' => ['required', 'string', 'min:8'],
+            ]);
+
+            $user = $request->user();
+            $user->password = bcrypt($request->password);
+            $user->save();
+
+            return back()->with('success', 'Password berhasil diupdate');
+        }
+        
 
         public function izinForm()
 {
