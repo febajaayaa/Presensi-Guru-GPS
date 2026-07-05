@@ -55,12 +55,21 @@
     overflow: hidden;
     box-shadow: 0 2px 8px rgba(15,23,42,0.06);
   }
-  table { width: 100%; border-collapse: collapse; }
+
+  /* WRAPPER BARU: ini yang membuat tabel bisa di-scroll ke samping di HP,
+     dipisah dari .table-card supaya sudut rounded-nya tidak ikut hilang */
+  .table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  table { width: 100%; border-collapse: collapse; min-width: 720px; }
   thead th {
     padding: 13px 18px; text-align: left;
     font-size: 11px; font-weight: 700; letter-spacing: 0.07em;
     text-transform: uppercase; color: #fff;
     background: #3B82F6;
+    white-space: nowrap;
   }
   tbody td {
     padding: 14px 18px; font-size: 14px; color: #1E293B;
@@ -82,7 +91,7 @@
   .av-purple { background: #EDE9FE; color: #7C3AED; }
   .av-teal   { background: #CCFBF1; color: #0F766E; }
 
-  .guru-cell { display: flex; align-items: center; gap: 12px; }
+  .guru-cell { display: flex; align-items: center; gap: 12px; white-space: nowrap; }
   .guru-name { font-weight: 600; color: #0F172A; font-size: 14px; }
   .guru-role { font-size: 12px; color: #94A3B8; margin-top: 1px; }
 
@@ -91,6 +100,7 @@
     display: inline-flex; align-items: center; gap: 5px;
     padding: 5px 12px; border-radius: 999px;
     font-size: 12px; font-weight: 600;
+    white-space: nowrap;
   }
   .status-badge .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
   .s-menunggu       { background: #FEF3C7; color: #92400E; }
@@ -104,6 +114,7 @@
   .jenis-badge {
     display: inline-block; padding: 4px 12px; border-radius: 8px;
     font-size: 12px; font-weight: 600;
+    white-space: nowrap;
   }
   .jenis-pribadi  { background: #DBEAFE; color: #1D4ED8; }
   .jenis-keluarga { background: #EDE9FE; color: #6D28D9; }
@@ -117,12 +128,14 @@
     padding: 6px 14px; border-radius: 8px; font-size: 12px; font-weight: 600;
     border: 1.5px solid #86EFAC; color: #15803D; background: #F0FDF4;
     cursor: pointer; transition: all 0.15s; display: inline-flex; align-items: center; gap: 4px;
+    white-space: nowrap;
   }
   .btn-setujui:hover { background: #DCFCE7; border-color: #4ADE80; }
   .btn-tolak {
     padding: 6px 14px; border-radius: 8px; font-size: 12px; font-weight: 600;
     border: 1.5px solid #FCA5A5; color: #B91C1C; background: #FFF1F2;
     cursor: pointer; transition: all 0.15s; display: inline-flex; align-items: center; gap: 4px;
+    white-space: nowrap;
   }
   .btn-tolak:hover { background: #FEE2E2; border-color: #F87171; }
   .action-group { display: flex; gap: 8px; }
@@ -144,6 +157,14 @@
   }
   .alert-success { background: #F0FDF4; color: #15803D; border: 1px solid #86EFAC; }
   .alert-error   { background: #FFF1F2; color: #B91C1C; border: 1px solid #FCA5A5; }
+
+  /* ── Responsive ── */
+  @media (max-width: 768px) {
+    .approval-wrap { padding: 20px 16px; }
+    .page-title { font-size: 20px; }
+    .filter-tabs { gap: 6px; }
+    .tab-btn { padding: 6px 12px; font-size: 12px; }
+  }
 </style>
 @endpush
 
@@ -203,6 +224,7 @@
     </div>
 
     <div class="table-card">
+      <div class="table-scroll">
       <table id="table-cuti">
         <thead>
           <tr>
@@ -299,6 +321,7 @@
           @endforelse
         </tbody>
       </table>
+      </div>
       <div class="table-footer">
         Menampilkan 1–{{ $cutis->count() }} dari {{ $cutis->count() }} data
       </div>
@@ -336,6 +359,7 @@
     </div>
 
     <div class="table-card">
+      <div class="table-scroll">
       <table id="table-izin">
         <thead>
           <tr>
@@ -432,6 +456,7 @@
           @endforelse
         </tbody>
       </table>
+      </div>
       <div class="table-footer">
         Menampilkan 1–{{ $izins->count() }} dari {{ $izins->count() }} data
       </div>

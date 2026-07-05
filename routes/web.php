@@ -108,17 +108,17 @@ Route::middleware(['auth', 'is_admin', 'scope.school'])->group(function () {
 });
 
 
-Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
+//Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
  
     // Resource route otomatis mendaftarkan GET/POST/PUT/DELETE
     // Ini yang mencegah error "PUT method not supported"
-    Route::resource('guru', GuruController::class)
-         ->except(['show']);
+//    Route::resource('guru', GuruController::class)
+//         ->except(['show']);
  
     // Route import Excel (di luar resource)
-    Route::post('guru/import', [GuruController::class, 'import'])
-         ->name('guru.import');
-});
+//    Route::post('guru/import', [GuruController::class, 'import'])
+//         ->name('guru.import');
+//});
  
 
 /*

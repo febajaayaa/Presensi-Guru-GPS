@@ -3,6 +3,9 @@
     .app-sidebar { transition: transform 0.3s ease; }
     .hamburger-btn { display: none; }
 
+    .grid-2col { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    .grid-3col { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; }
+
     @media (max-width: 768px) {
         .hamburger-btn {
             display: flex;
@@ -21,7 +24,7 @@
         }
         .app-sidebar { transform: translateX(-100%); }
         .app-sidebar.open { transform: translateX(0); }
-        .app-main { margin-left: 0 !important; }
+        .app-main { margin-left: 0 !important; padding: 24px 16px !important; }
         .sidebar-overlay {
             display: none;
             position: fixed; inset: 0;
@@ -29,6 +32,9 @@
             z-index: 45;
         }
         .sidebar-overlay.show { display: block; }
+
+        .grid-2col { grid-template-columns: 1fr; }
+        .grid-3col { grid-template-columns: 1fr; }
     }
 </style>
 
@@ -43,7 +49,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
 
 {{-- SIDEBAR --}}
-<aside style="width:240px; background:linear-gradient(160deg,#0F172A 0%,#1E3A5F 60%,#1D4ED8 100%); color:white; position:fixed; top:0; left:0; height:100vh; display:flex; flex-direction:column; box-shadow:4px 0 24px rgba(0,0,0,0.18); z-index:50;">
+<aside class="app-sidebar" style="width:240px; background:linear-gradient(160deg,#0F172A 0%,#1E3A5F 60%,#1D4ED8 100%); color:white; position:fixed; top:0; left:0; height:100vh; display:flex; flex-direction:column; box-shadow:4px 0 24px rgba(0,0,0,0.18); z-index:50;">
 
     {{-- Brand --}}
     <div style="padding:22px 20px 16px; border-bottom:1px solid rgba(255,255,255,0.08);">
@@ -121,10 +127,10 @@
 </aside>
 
 {{-- MAIN CONTENT --}}
-<div style="flex:1; margin-left:240px; padding:24px 28px;">
+<div class="app-main" style="flex:1; margin-left:240px; padding:24px 28px;">
 
     {{-- BREADCRUMB --}}
-    <nav style="display:flex; align-items:center; gap:6px; font-size:12px; color:#94A3B8; margin-bottom:20px;">
+    <nav style="display:flex; align-items:center; gap:6px; font-size:12px; color:#94A3B8; margin-bottom:20px; flex-wrap:wrap;">
         <a href="{{ route('superadmin.dashboard') }}" style="color:#94A3B8; text-decoration:none;" onmouseover="this.style.color='#1E40AF'" onmouseout="this.style.color='#94A3B8'">Beranda</a>
         <span>›</span>
         <a href="/admin/schools" style="color:#94A3B8; text-decoration:none;" onmouseover="this.style.color='#1E40AF'" onmouseout="this.style.color='#94A3B8'">Data Sekolah</a>
@@ -155,7 +161,7 @@
     @endif
 
     {{-- Header --}}
-    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:24px;">
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; flex-wrap:wrap; gap:8px;">
         <div>
             <h1 style="font-size:20px; font-weight:600; color:#1E293B; margin:0;">Edit Sekolah</h1>
             <p style="font-size:13px; color:#64748B; margin:4px 0 0;">{{ $school->nama_sekolah }}</p>
@@ -172,7 +178,7 @@
                 <div style="font-size:13px; font-weight:600; color:#1E293B;">Identitas Sekolah</div>
                 <div style="font-size:12px; color:#94A3B8; margin-top:2px;">Informasi dasar yang ditampilkan di dashboard admin</div>
             </div>
-            <div style="padding:20px; display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+            <div class="grid-2col" style="padding:20px;">
 
                 {{-- Nama Sekolah --}}
                 <div style="grid-column:span 2;">
@@ -255,7 +261,7 @@
                         Logo Sekolah
                         <span style="font-size:11px; font-weight:400; color:#94A3B8; margin-left:4px;">JPG/PNG/SVG, maks. 1 MB</span>
                     </label>
-                    <div style="display:flex; align-items:center; gap:16px; padding:14px 16px; background:#F8FAFC; border:1.5px dashed #CBD5E1; border-radius:10px;">
+                    <div style="display:flex; align-items:center; gap:16px; padding:14px 16px; background:#F8FAFC; border:1.5px dashed #CBD5E1; border-radius:10px; flex-wrap:wrap;">
 
                         {{-- Preview logo lama atau placeholder --}}
                         <div style="width:72px; height:72px; border-radius:10px; border:2px solid #E2E8F0; background:#fff; display:flex; align-items:center; justify-content:center; overflow:hidden; flex-shrink:0;">
@@ -271,7 +277,7 @@
                             @endif
                         </div>
 
-                        <div style="flex:1;">
+                        <div style="flex:1; min-width:160px;">
                             <label for="logoInput"
                                 style="display:inline-flex; align-items:center; gap:6px; background:#2563EB; color:white; padding:8px 16px; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer;"
                                 onmouseover="this.style.background='#1D4ED8'" onmouseout="this.style.background='#2563EB'">
@@ -298,7 +304,7 @@
                 <div style="font-size:13px; font-weight:600; color:#1E293B;">Lokasi & Radius Absensi</div>
                 <div style="font-size:12px; color:#94A3B8; margin-top:2px;">Digunakan untuk validasi lokasi absensi guru</div>
             </div>
-            <div style="padding:20px; display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px;">
+            <div class="grid-3col" style="padding:20px;">
 
                 <div>
                     <label style="display:block; font-size:12px; font-weight:500; color:#374151; margin-bottom:6px;">Latitude <span style="color:#EF4444;">*</span></label>
@@ -328,7 +334,7 @@
         </div>
 
         {{-- TOMBOL SIMPAN --}}
-        <div style="display:flex; gap:10px; justify-content:flex-end;">
+        <div style="display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap;">
             <a href="{{ route('superadmin.schools') }}"
                style="padding:10px 20px; border-radius:8px; border:1px solid #D1D5DB; background:white; font-size:13px; color:#374151; text-decoration:none;"
                onmouseover="this.style.background='#F9FAFB'" onmouseout="this.style.background='white'">
@@ -346,6 +352,11 @@
 </div>
 
 <script>
+function toggleSidebar() {
+    document.querySelector('.app-sidebar').classList.toggle('open');
+    document.getElementById('sidebarOverlay').classList.toggle('show');
+}
+
 function previewLogo(input) {
     const img   = document.getElementById('logoPreviewImg');
     const icon  = document.getElementById('logoIcon');
