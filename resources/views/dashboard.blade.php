@@ -145,7 +145,7 @@
                         </span>
                         <span class="flex items-center gap-1.5">
                             <i class="ti ti-clock-out text-base text-gray-400" aria-hidden="true"></i>
-                            Pulang: <strong class="text-gray-800">12:30 WIB</strong>
+                            Pulang: <strong class="text-gray-800">14:00 WIB</strong>
                         </span>
                     </div>
 
@@ -182,13 +182,13 @@
                         ($todayCuti && $todayCuti->status != 'ditolak') ||
                         ($izinPending && in_array($izinPending->status, ['pending','disetujui']));
 
-                    $labelMasuk = 'Absen Masuk';
+                    $labelMasuk = 'Datang';
                     if ($izinPending && $izinPending->status == 'pending')    $labelMasuk = 'Menunggu Persetujuan';
                     if ($izinPending && $izinPending->status == 'disetujui') $labelMasuk = 'Izin Disetujui';
                     if ($today && $today->jam_masuk) $labelMasuk = 'Sudah Absen Masuk';
 
                     $disabledKeluar = !($today && $today->jam_masuk) || ($today && $today->jam_keluar);
-                    $labelKeluar = $today && $today->jam_keluar ? 'Sudah Absen Keluar' : 'Absen Keluar';
+                    $labelKeluar = $today && $today->jam_keluar ? 'Sudah Absen Keluar' : 'Pulang';
                     @endphp
 
                     <div class="grid grid-cols-2 gap-3">
