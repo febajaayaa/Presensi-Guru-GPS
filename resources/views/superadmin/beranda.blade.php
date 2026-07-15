@@ -95,9 +95,9 @@
         @php
         $navItems = [
             ['label' => 'Beranda',        'url' => route('superadmin.dashboard'), 'route' => 'superadmin.dashboard', 'icon' => 'ti-layout-dashboard'],
-            ['label' => 'Kelola Akun',    'url' => '/superadmin/users',           'route' => null,                   'icon' => 'ti-users'],
-            ['label' => 'Data Sekolah',   'url' => '/admin/schools',              'route' => null,                   'icon' => 'ti-building'],
-            ['label' => 'Tambah Sekolah', 'url' => '/admin/schools/create',       'route' => null,                   'icon' => 'ti-building-community'],
+            ['label' => 'Kelola Akun',    'url' => route('admin.users'),          'route' => 'admin.users',          'icon' => 'ti-users'],
+            ['label' => 'Data Sekolah',   'url' => route('superadmin.schools'),   'route' => 'superadmin.schools',   'icon' => 'ti-building'],
+            ['label' => 'Tambah Sekolah', 'url' => route('superadmin.schools.create'), 'route' => 'superadmin.schools.create', 'icon' => 'ti-building-community'],
         ];
         @endphp
 
@@ -199,7 +199,7 @@
             <h2 style="font-size:16px; font-weight:700; color:#0F172A; margin:0; display:flex; align-items:center; gap:8px;">
                 <i class="ti ti-users" style="font-size:18px; color:#3B82F6;"></i> Pengguna Terdaftar
             </h2>
-            <a href="/admin/users" style="font-size:12px; color:#3B82F6; text-decoration:none; display:flex; align-items:center; gap:4px;">
+            <a href="{{ route('admin.users') }}" style="font-size:12px; color:#3B82F6; text-decoration:none; display:flex; align-items:center; gap:4px;">
                 Lihat semua <i class="ti ti-arrow-right" style="font-size:14px;"></i>
             </a>
         </div>

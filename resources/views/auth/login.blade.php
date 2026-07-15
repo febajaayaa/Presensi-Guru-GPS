@@ -82,4 +82,9 @@
 
     </div>
 
+    <!-- CREDIT -->
+    <p class="mt-5 text-center text-xs text-gray-400">
+        &copy; {{ date('Y') }} Smart Presensi &middot; Dibuat oleh Bysri Febri Hardiyanti
+    </p>
+
 </x-guest-layout>
